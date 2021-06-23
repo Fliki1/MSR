@@ -21,12 +21,11 @@ python main.py
 #### Ambiente di sviluppo
 Sto usando PyCharm per gestire un ambiente venv con Python 3.8
 
-####TODO:
-Esportare i requisiti del progetto e renderli disponibili su git
+#### TODO:
 
-Creare i metodi
-
-Vedere se funziona:
+1. Esportare i requisiti del progetto e renderli disponibili su git
+1. Creare i metodi
+1. Vedere se funziona:
 ````commandline
 python3 -m venv venv
 source venv/bin/activate
