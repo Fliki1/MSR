@@ -19,7 +19,10 @@ python main.py
 * [PyDriller](https://github.com/ishepard/pydriller): a  Python framework that helps developers in analyzing Git repositories
 
 #### Ambiente di sviluppo
-Sto usando PyCharm per gestire un ambiente venv con Python 3.8
+Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
+Al fine di prevenire problemi di dependency, rendere il progetto riproducibile e auto-contenuto.
+Per installare i dovuti packages su un host che non si hanno i permessi admin.
+Evita l'uso della directory `side-packages/` quando si necessità l'uso di questi solo per un progetto.
 
 #### TODO:
 
