@@ -1,0 +1,7 @@
+gitdb==4.0.7
+GitPython==3.1.18
+giturlparse==0.10.0
+lizard==1.17.7
+PyDriller==2.0
+pytz==2021.1
+smmap==4.0.0
