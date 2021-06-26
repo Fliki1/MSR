@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ````
 Start script
 ````commandline
-python main.py
+python main.py [-h] [-v]
 ````
 
 ### Requires
@@ -56,3 +56,5 @@ E poi installare i requirements:
 ````commandline
 pip install -r requirements.txt
 ````
+1. Gestire un output iniziale tipo: https://github.com/paramt/url-checker/tree/0abea3252caa144bd1e6b7786d715b6ff367a4be
+1. loggingngs
