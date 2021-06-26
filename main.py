@@ -1,8 +1,22 @@
-import test
+# import test
 from pydriller import Repository
+from giturlparse import parse
+
+def remove_duplicates(urls):
+    """Return list dei urls non duplicati"""
+    return list(set(urls))
+
+def check_url(urls):
+    """Validate url presi in input, return lista ulr validi e non duplicata"""
+    url_list = []
+    urls_not_duplicate = remove_duplicates(urls)    # remove duplicate urls
+    for url in urls_not_duplicate:
+        if(parse(url).valid & url.endswith(".git")):
+            url_list.append(url)
+            print("✔ "+url)
+    return url_list
 
 def driller(url):
-    # TODO: come ottenere la lista di commit di un repository
     # TODO: continuare a seguire la doc di PyDriller ufficiale
     # TODO: prendere spunto da Commit_modificati.py e altro contenuto nella cartella clone ubuntu!
     # TODO: gestire una cartella src/ con i singoli metodi implementati
@@ -12,17 +26,18 @@ def driller(url):
             commit.hash,
             commit.author.name))
 
-def main():
-    # codice da testare o di default variabili settate
-    print("ciao a tutti faccio cose")
-    # posso richiamare altri metodi come metodo()... metodo() che se viene fatto l'import di main in un altro scritp potrà essere eseguito
-    #test.print_hi("pippo")
-    #test.function()
+def get_git_urls():
+    """Domanda all'user i git da analizzare, return lista url leciti"""
+    url_input = input("Enter Gits Repositories: ")
+    urls = url_input.split(", ")
+    #print(urls)
+    urls_validate = check_url(urls) # git url ckeck
+    return urls_validate
 
 if __name__ == "__main__":
     # execute only if run as a script
     # se eseguito come main script di tutto il progetto, stabilisco condizioni di base: repository fissato, quali metodi ecc..
     #main()
-    # TODO: gestire più url da input
-    url = ["https://github.com/ishepard/pydriller.git"]
-    driller(url)
+    urls = get_git_urls()
+    #print(urls)
+    driller(urls)
