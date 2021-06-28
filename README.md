@@ -30,7 +30,7 @@ python main.py [-h] [-v]
 * Python 3.8
 * Git
 * [PyDriller](https://github.com/ishepard/pydriller): a  Python framework that helps developers in analyzing Git repositories
-
+* [giturlparse](https://pypi.org/project/giturlparse/): Parse & rewrite git urls (supports GitHub, Bitbucket, FriendCode, Assembla, Gitlab …)
 #### Requirements:
 requirements.txt comprende la lista delle third party packages con i relativi version numbers
 ````commandline

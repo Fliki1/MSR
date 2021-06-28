@@ -3,8 +3,7 @@ from giturlparse import parse
 import logging
 import argparse
 
-logger = logging.getLogger(__name__)  # nome del modulo corrente
-
+logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
 
 def remove_duplicates(urls):
     """Return list dei urls non duplicati"""
@@ -68,29 +67,9 @@ def arg_parse():
     args = parser.parse_args()
     return args.verbose
 
-'''
-def set_log():
-    """Setto i parametri per gestire il file di log"""
-    # Comprende cosi dal debug ai livelli superiori fino a critical
-    # salvo i log nel file (non sovrascrive i old log)
-    # Cambio il formato dei log: time - level name - message
-    # filemode='w' se si vuole sovrascrivere i log a ogni esecuzione di programma
-    # datefmt='%m/%d/%Y %I:%M:%S %p' per cambiare il formato time
-    logging.basicConfig(filename='./log/mylog.log', level=logging.DEBUG,
-                        format='%(asctime)s:%(levelname)s:%(message)s')
-    logging.info('Started')
-    # do something
-    logging.info('Finished')
-'''
-
 if __name__ == "__main__":
-    # Log1
-    # set_log()
-    # logging.info('Started')
-    # dostuff
-    # logging.info('Finished')
 
-    # Log2: gestisce sia la console che il salvataggio dei log (diversi per modulo)
+    # Log2: gestisce sia la console che il salvataggio dei log [-v] (diversi per modulo)
     verb = arg_parse()  # args parse: verbose?
     log(verb)           # log file
     logger.info('Inizio')
