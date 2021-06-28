@@ -1,7 +1,11 @@
-from pydriller import Repository
-from giturlparse import parse
-import logging
 import argparse
+import logging
+import git
+from giturlparse import parse
+from pydriller import Repository
+from pydriller import Git
+
+from src import Metodo1
 
 logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
 
@@ -24,16 +28,21 @@ def check_url(urls):
     return url_list
 
 
-def driller(url):
+def driller(urls):
     """Invoca metodo di analisi"""
     # TODO: continuare a seguire la doc di PyDriller ufficiale
     # TODO: prendere spunto da Commit_modificati.py e altro contenuto nella cartella clone ubuntu!
     # TODO: gestire una cartella src/ con i singoli metodi implementati
-    for commit in Repository(path_to_repo=url).traverse_commits():
-        print('Project {}, Hash {}, author {}'.format(
-            commit.project_path,
-            commit.hash,
-            commit.author.name))
+    for url in urls:
+        repo = Repository(path_to_repo=url).traverse_commits()
+        commit = next(repo)
+        git = Git(commit.project_path)
+        print(git.total_commits())
+        #for commit in repo:
+        #    print('Project {}, Hash {}, author {}'.format(
+        #        commit.project_path,
+        #        commit.hash,
+        #        commit.author.name))
 
 
 def get_git_urls():
@@ -44,7 +53,6 @@ def get_git_urls():
     urls_validate = check_url(urls_not_duplicate)  # git url ckeck
     return urls_validate
 
-
 def log(verbos):
     """ Setto i parametri per gestire il file di log """
     logger.setLevel(logging.DEBUG)
@@ -54,7 +62,6 @@ def log(verbos):
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
-
     # FileHandler: outputfile
     file_handler = logging.FileHandler('./log/main.log')
     file_handler.setFormatter(formatter)
@@ -74,5 +81,7 @@ if __name__ == "__main__":
     log(verb)           # log file
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
-    # driller(urls)
+    Metodo1.metodo2(urls)
+    # TODO: capire quanti commit ha un repository
+    #driller(urls)
     logger.info('Fine del M.S.R.')
