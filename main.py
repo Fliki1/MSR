@@ -81,7 +81,6 @@ if __name__ == "__main__":
     log(verb)           # log file
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
-    Metodo1.metodo2(urls)
+    Metodo1.metodo2(urls, verb)
     # TODO: capire quanti commit ha un repository
-    #driller(urls)
     logger.info('Fine del M.S.R.')
