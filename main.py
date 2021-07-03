@@ -7,6 +7,7 @@ from pydriller import Git
 
 from src import Metodo1
 
+# create logger
 logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
 
 def remove_duplicates(urls):
@@ -56,9 +57,9 @@ def get_git_urls():
 def log(verbos):
     """ Setto i parametri per gestire il file di log """
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+    formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s', datefmt='%d/%m/%Y %H:%M:%S')
     if verbos:
-        # StreamHandler: console
+        # create console handler
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
