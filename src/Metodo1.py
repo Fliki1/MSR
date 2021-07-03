@@ -21,7 +21,7 @@ def log(verbos):
     logger.addHandler(file_handler)
 
 def bar_view(repo, total_commits):
-    """ Metodo1 bar console """
+    """ Metodo1 bar console, non buono per benchmark visto il 0.1sec di delay """
     for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(), total_commits,
                                              prefix='Progress:', suffix='Complete', length=50):
         logger.info('Hash {}'.format(commit.hash))
@@ -29,7 +29,7 @@ def bar_view(repo, total_commits):
 
 def log_view(repo, total_commits):
     """ Metodo1 log console """
-    commit_count = 0
+    commit_count = 1
     for commit in Repository(path_to_repo=repo).traverse_commits():
         logger.info(f'{commit_count}/{total_commits}: Hash {commit.hash}')
         commit_count = commit_count + 1
