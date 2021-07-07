@@ -46,7 +46,10 @@ Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 #### TODO:
 
 1. ~~Esportare i requisiti del progetto e renderli disponibili su git~~
-1. Creare i metodi
+1. Creare i metodi:
+   1. ~~commit per settimana~~
+    1. commit al mese?
+    1. commit all'anno?
 1. Vedere se funziona:
 ````commandline
 python3 -m venv venv
@@ -56,5 +59,5 @@ E poi installare i requirements:
 ````commandline
 pip install -r requirements.txt
 ````
-1. Gestire un output iniziale tipo: https://github.com/paramt/url-checker/tree/0abea3252caa144bd1e6b7786d715b6ff367a4be
-1. loggingngs
+~~1. Gestire un output iniziale tipo: https://github.com/paramt/url-checker/tree/0abea3252caa144bd1e6b7786d715b6ff367a4be~~
+~~1. loggingngs~~

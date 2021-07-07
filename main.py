@@ -1,23 +1,24 @@
 import argparse
 import logging
-import git
-from giturlparse import parse
-from pydriller import Repository
-from pydriller import Git
 
-from src import Metodo1
+from giturlparse import parse
+
+# TODO: continuare a seguire la doc di PyDriller ufficiale
+# TODO: prendere spunto da Commit_modificati.py e altro contenuto nella cartella clone ubuntu!
+
+from src import WeekCommit
 
 # create logger
 logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
 
 def remove_duplicates(urls):
-    """Return list dei urls non duplicati"""
+    """ Return list dei urls non duplicati """
     logger.info('Rimozione url duplicati')
     return list(set(urls))
 
 
 def check_url(urls):
-    """Validate url presi in input, return lista url validi e non duplicati"""
+    """ Validate url presi in input, return lista url validi e non duplicati """
     url_list = []
     for url in urls:
         if parse(url).valid & url.endswith(".git"):
@@ -27,23 +28,6 @@ def check_url(urls):
             logger.debug("❌ " + url)
     logger.info('Urls validati')
     return url_list
-
-
-def driller(urls):
-    """Invoca metodo di analisi"""
-    # TODO: continuare a seguire la doc di PyDriller ufficiale
-    # TODO: prendere spunto da Commit_modificati.py e altro contenuto nella cartella clone ubuntu!
-    # TODO: gestire una cartella src/ con i singoli metodi implementati
-    for url in urls:
-        repo = Repository(path_to_repo=url).traverse_commits()
-        commit = next(repo)
-        git = Git(commit.project_path)
-        print(git.total_commits())
-        #for commit in repo:
-        #    print('Project {}, Hash {}, author {}'.format(
-        #        commit.project_path,
-        #        commit.hash,
-        #        commit.author.name))
 
 
 def get_git_urls():
@@ -70,18 +54,21 @@ def log(verbos):
 
 def arg_parse():
     """ Verifico la possibile chiamata verbose """
-    parser = argparse.ArgumentParser(description="Script che implementa metriche per il M.S.R. : tipo1 ,tipo2...")
+    parser = argparse.ArgumentParser(description="Script che implementa metriche per il M.S.R. : week_commit ,tipo2...")
+    parser.add_argument("-w", "--week", help="metrica: week commit", action="store_true")
     parser.add_argument("-v", "--verbose", help="restituisce output verboso", action="store_true")
     args = parser.parse_args()
-    return args.verbose
+    return args.verbose, args.week
     # TODO: gestione chiamata di quale tipo di metrica si vuole eseguire
 
+
 if __name__ == "__main__":
+
     # Log: gestisce sia la console che il salvataggio dei log [-v] (diversi per modulo)
-    verb = arg_parse()  # args parse: verbose choise?
+    verb, week = arg_parse()  # args parse: verbose choise?
     log(verb)           # log file
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
-    Metodo1.metodo2(urls, verb)
-    # TODO: capire quanti commit ha un repository
+    # if week:
+    WeekCommit.week_commit(urls, verb)
     logger.info('Fine del M.S.R.')
