@@ -6,6 +6,14 @@ Riconversione ed ampliamento del progetto esistente da Java ☕ -> Python 3 🐍
 ## Details
 Il progetto consiste nella creazione di una serie di metriche specifie e peculiari per analizzare, un repository o una lista di questi, seguendo i dettami della M.S.R. al fine di ottenere possibili informazioni utili per l'Ingegneria del Software
 
+### 1. Activity per day of the week:
+To calculate these values we collected and aggregated (in particular summarized) the commits for each day of the week. The goal is to have a graphical representation of the commit
+distribution and to identify in which day or in which part of the week it is.
+
+### 2. Activity per hour of the day:
+Similar to the previous one, in this case, the commit data are distributed throughout the hours of the day. 
+This metric shows in which part of the day, we usually have an activity peak and also provides a complete snapshot of the daily development activity.
+
 ## Quick usage:
 Git clone
 ````commandline
@@ -22,9 +30,14 @@ pip install -r requirements.txt
 ````
 Start script
 ````commandline
-python main.py [-h] [-v]
+python main.py [-h] [-w] [-hrs]
 ````
-
+````commandline
+  -h, --help     show this help message and exit
+  -w, --week     metrica: week commit
+  -hrs, --hour   metrica: hour commit
+  -v, --verbose  restituisce output verboso
+````
 ### Requires
 [comment]: <> (Pronto prova)
 * Python 3.8

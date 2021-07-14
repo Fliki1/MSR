@@ -34,7 +34,6 @@ def print_tabulate(repo_list, headers, week_matrix):
     repo_name_col.shape = (len(repo_list), 1)
     # Unisco i nomi dei repo alla matrice di conteggio commit per giorni della settimana
     week_matrix_new = np.hstack((repo_name_col, week_matrix))
-    # print(week_matrix_new)
     print(tabulate(week_matrix_new, headers=headers, tablefmt="grid"))
 
 
@@ -111,7 +110,7 @@ def week_commit(urls, verbose):
         repo = Repository(path_to_repo=url).traverse_commits()
         commit = next(repo)
         logger.info(f'Project: {commit.project_name}')  # project name
-        print(f'Project: {commit.project_name}')
+        print(f'(week_commit) Project: {commit.project_name}')
         git = Git(commit.project_path)
         logger.debug(f'Project: {commit.project_name} #Commits: {git.total_commits()}')  # total commits
         if verbose:  # log file + console
