@@ -9,7 +9,7 @@ from tabulate import tabulate
 
 import numpy as np
 
-logger = logging.getLogger(__name__)  # nome del modulo corrente (WeekCommit.py)
+logger = logging.getLogger(__name__)  # nome del modulo corrente (AverageCommit.py)
 
 
 def log(verbos):
@@ -22,39 +22,39 @@ def log(verbos):
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
     # FileHandler: outputfile
-    file_handler = logging.FileHandler('./log/WeekCommit.log')
+    file_handler = logging.FileHandler('./log/AverageCommit.log')
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
 
-def print_tabulate(repo_list, headers, week_matrix):
+def print_tabulate(repo_list, headers, average_matrix):
     """ Tabulate and print """
     # Rendo vettore colonna i nomi dei repo
     repo_name_col = np.array(repo_list)
     repo_name_col.shape = (len(repo_list), 1)
     # Unisco i nomi dei repo alla matrice di conteggio commit per giorni della settimana
-    week_matrix_new = np.hstack((repo_name_col, week_matrix))
-    print(tabulate(week_matrix_new, headers=headers, tablefmt="grid"))
+    average_matrix_new = np.hstack((repo_name_col, average_matrix))
+    print(tabulate(average_matrix_new, headers=headers, tablefmt="simple"))
 
 
-def bar_view(repo, repo_index, total_commits, week_matrix):
-    """ Weekly commit: bar console, non buono per benchmark visto il 0.1s di delay """
+def bar_view(repo, repo_index, total_commits, average_matrix):
+    """ Average commit: bar console, non buono per benchmark visto il 0.1s di delay """
     for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(), total_commits,
                                              prefix='Progress:', suffix='Complete', length=50):
-        logger.info(f'Hash {commit.hash}: WeekDay {commit.committer_date.weekday()}')
-        week_matrix[repo_index, commit.committer_date.weekday()] += 1
+        logger.info(f'Hash {commit.hash}: Average {"""commit.committer_date.hour"""}')
+        average_matrix[repo_index, """commit.committer_date.hour"""] += 1
         time.sleep(0.1)
-    return week_matrix
+    return average_matrix
 
 
-def log_view(repo, repo_index, total_commits, week_matrix):
-    """ Weekly commit: log console """
+def log_view(repo, repo_index, total_commits, average_matrix):
+    """ Average commit: log console """
     commit_count = 1
     for commit in Repository(path_to_repo=repo).traverse_commits():
-        logger.info(f'{commit_count}/{total_commits}: Hash {commit.hash}: WeekDay {commit.committer_date.weekday()}')
+        logger.info(f'{commit_count}/{total_commits}: Hash {commit.hash}: Average {"""commit.committer_date.hour"""}')
         commit_count += 1
-        week_matrix[repo_index, commit.committer_date.weekday()] += 1
-    return week_matrix
+        #average_matrix[repo_index, """commit.committer_date.hour"""] += 1
+    return average_matrix
 
 
 def repo_list(urls):
@@ -67,43 +67,34 @@ def repo_list(urls):
     return rep_list
 
 
-def csv_generation(repo_list, headers, week_commit):
+def csv_generation(repo_list, headers, average_commit):
     """ Generazione dei file CSV """
-    csv_headers = ["Week_day", "Count_day"]
+    csv_headers = ["Commit_hash", "Activity_Score"]
     row_project = 0
     for repo_name in repo_list:
-        with open("./data-results/week_commit_" + repo_name + ".csv", 'w') as f:
+        with open("./data-results/average_commit_" + repo_name + ".csv", 'w') as f:
             # Header del csv
             writer = csv.DictWriter(f, fieldnames=csv_headers)
             writer.writeheader()
-            for i, entry in enumerate(week_commit[row_project]):
+            for i, entry in enumerate(average_commit[row_project]):
                 # riga del csv
-                writer.writerow({csv_headers[0]: headers[i+1],  # Week_day
-                                 csv_headers[1]: entry})        # Count_day
-            """
-            writer.writerow({headers[0]: repo_name,
-                             headers[1]: week_commit[row_project][0],
-                             headers[2]: week_commit[row_project][1],
-                             headers[3]: week_commit[row_project][2],
-                             headers[4]: week_commit[row_project][3],
-                             headers[5]: week_commit[row_project][4],
-                             headers[6]: week_commit[row_project][5],
-                             headers[7]: week_commit[row_project][6]})"""
+                writer.writerow({csv_headers[0]: headers[i + 1],    # Commit_hash
+                                 csv_headers[1]: entry})            # Activity_Score
         # next project
         row_project += 1
-        logger.info(f'Week Commit: {repo_name} ✔')
+        logger.info(f'Average Commit: {repo_name} ✔')
 
 
-def week_commit(urls, verbose):
-    """ Invoca metodo di analisi: Week Commits """
+def average_commit(urls, average_file_type, verbose):
+    """ Invoca metodo di analisi: Average Commits """
     # Setting log
     log(verbose)
 
-    # Tag per i file csv
-    headers = ["Nome repo.", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+    # Tag per i file csv: no header in quanto non ho una misura precisa
+    # headers = ["Nome repo.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10","11", "12", "13", "14", "15", "16", "17", "18", "19", "20","21", "22", "23"]
 
     # Matrice: riga il progetto, colonna count del giorno corrispettivo
-    week_matrix = np.zeros(((len(urls)), 7), dtype=int)
+    average_matrix = np.zeros(((len(urls)), 24), dtype=int)
 
     # Indice del repo corrente sotto analisi
     repo_index = 0
@@ -115,17 +106,17 @@ def week_commit(urls, verbose):
         repo = Repository(path_to_repo=url).traverse_commits()
         commit = next(repo)
         logger.info(f'Project: {commit.project_name}')  # project name
-        print(f'(week_commit) Project: {commit.project_name}')
+        print(f'(average_commit) Project: {commit.project_name}')
         git = Git(commit.project_path)
         logger.debug(f'Project: {commit.project_name} #Commits: {git.total_commits()}')  # total commits
         if verbose:  # log file + console
-            week_matrix = log_view(url, repo_index, git.total_commits(), week_matrix)
+            average_matrix = log_view(url, repo_index, git.total_commits(), average_matrix)
         else:  # log file
-            week_matrix = bar_view(url, repo_index, git.total_commits(), week_matrix)
+            average_matrix = bar_view(url, repo_index, git.total_commits(), average_matrix)
         repo_index += 1
 
     # Stampo a video il risultato
-    print_tabulate(rep_list, headers, week_matrix)
+    print_tabulate(rep_list, headers, average_matrix)
 
     # CSV file
-    csv_generation(rep_list, headers, week_matrix)
+    csv_generation(rep_list, headers, average_matrix)

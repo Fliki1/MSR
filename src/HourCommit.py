@@ -9,7 +9,7 @@ from tabulate import tabulate
 
 import numpy as np
 
-logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py)
+logger = logging.getLogger(__name__)  # nome del modulo corrente (HourCommit.py)
 
 
 def log(verbos):
@@ -69,14 +69,19 @@ def repo_list(urls):
 
 def csv_generation(repo_list, headers, hour_commit):
     """ Generazione dei file CSV """
+    csv_headers = ["Hour_of_day", "Count_hour"]
     row_project = 0
     for repo_name in repo_list:
         with open("./data-results/hour_commit_" + repo_name + ".csv", 'w') as f:
             # Header del csv
-            writer = csv.DictWriter(f, fieldnames=headers)
+            writer = csv.DictWriter(f, fieldnames=csv_headers)
             writer.writeheader()
-            # riga del csv
-            writer.writerow({headers[0]: repo_name,
+            for i, entry in enumerate(hour_commit[row_project]):
+                # riga del csv
+                writer.writerow({csv_headers[0]: headers[i + 1],  # Hour_of_day
+                                 csv_headers[1]: entry})  # Count_hour
+
+            """writer.writerow({headers[0]: repo_name,
                              headers[1]: hour_commit[row_project][0],
                              headers[2]: hour_commit[row_project][1],
                              headers[3]: hour_commit[row_project][2],
@@ -100,7 +105,7 @@ def csv_generation(repo_list, headers, hour_commit):
                              headers[21]: hour_commit[row_project][20],
                              headers[22]: hour_commit[row_project][21],
                              headers[23]: hour_commit[row_project][22],
-                             headers[24]: hour_commit[row_project][23]})
+                             headers[24]: hour_commit[row_project][23]})"""
         # next project
         row_project += 1
         logger.info(f'Hour Commit: {repo_name} ✔')
