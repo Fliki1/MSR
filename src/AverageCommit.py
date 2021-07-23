@@ -27,34 +27,57 @@ def log(verbos):
     logger.addHandler(file_handler)
 
 
-def print_tabulate(repo_list, headers, average_matrix):
-    """ Tabulate and print """
+"""def print_tabulate(repo_list, headers, average_matrix):
+    # Tabulate and print
     # Rendo vettore colonna i nomi dei repo
     repo_name_col = np.array(repo_list)
     repo_name_col.shape = (len(repo_list), 1)
     # Unisco i nomi dei repo alla matrice di conteggio commit per giorni della settimana
     average_matrix_new = np.hstack((repo_name_col, average_matrix))
-    print(tabulate(average_matrix_new, headers=headers, tablefmt="simple"))
+    print(tabulate(average_matrix_new, headers=headers, tablefmt="simple"))"""
 
 
-def bar_view(repo, repo_index, total_commits, average_matrix):
-    """ Average commit: bar console, non buono per benchmark visto il 0.1s di delay """
-    for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(), total_commits,
-                                             prefix='Progress:', suffix='Complete', length=50):
-        logger.info(f'Hash {commit.hash}: Average {"""commit.committer_date.hour"""}')
-        average_matrix[repo_index, """commit.committer_date.hour"""] += 1
-        time.sleep(0.1)
-    return average_matrix
-
-
-def log_view(repo, repo_index, total_commits, average_matrix):
-    """ Average commit: log console """
-    commit_count = 1
-    for commit in Repository(path_to_repo=repo).traverse_commits():
-        logger.info(f'{commit_count}/{total_commits}: Hash {commit.hash}: Average {"""commit.committer_date.hour"""}')
+def bar_view(repo, total_commits, average_file_type):
+    """ Average commit: bar console, non buono per benchmark visto il 0.1s di delay
+        e anche il conteggio del calcolo: sum(1 for x in generator) oppure len(list(generator))"""
+    if average_file_type is not None:
+        for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo,
+                                                            only_modifications_with_file_types=[average_file_type]).traverse_commits(),
+                                                 sum(1 for x in Repository(path_to_repo=repo,
+                                                            only_modifications_with_file_types=[average_file_type]).traverse_commits()),
+                                                 prefix='Progress:', suffix='Complete', length=50):
+            logger.info(f'Hash: {commit.hash}, '
+                        f'Average type: {average_file_type}, '
+                        f'Added+Deleted: {commit.lines}')
+            time.sleep(0.1)
+    else:
+        commit_count = 1
+        for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(),
+                                                 total_commits, prefix='Progress:', suffix='Complete', length=50):
+            logger.info(
+                f'{commit_count}/{total_commits}: Hash: {commit.hash}, '
+                f'Average type: {average_file_type}, '
+                f'Added+Deleted: {commit.lines}')
+            time.sleep(0.1)
         commit_count += 1
-        #average_matrix[repo_index, """commit.committer_date.hour"""] += 1
-    return average_matrix
+
+
+def log_view(repo, total_commits, average_file_type):
+    """ Average commit: log console """
+    if average_file_type is not None:
+        for commit in Repository(path_to_repo=repo,
+                                 only_modifications_with_file_types=[average_file_type]).traverse_commits():
+            logger.info(f'Hash: {commit.hash}, '
+                        f'Average type: {average_file_type}, '
+                        f'Added+Deleted: {commit.lines}')
+    else:   # su tutto
+        commit_count = 1
+        for commit in Repository(path_to_repo=repo).traverse_commits():
+            logger.info(
+                f'{commit_count}/{total_commits}: Hash: {commit.hash}, '
+                f'Average type: {average_file_type}, '
+                f'Added+Deleted: {commit.lines}')
+            commit_count += 1
 
 
 def repo_list(urls):
@@ -90,11 +113,11 @@ def average_commit(urls, average_file_type, verbose):
     # Setting log
     log(verbose)
 
-    # Tag per i file csv: no header in quanto non ho una misura precisa
+    # Tag per i file csv: no header in quanto non ho una misura precisa di quanti siano
     # headers = ["Nome repo.", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10","11", "12", "13", "14", "15", "16", "17", "18", "19", "20","21", "22", "23"]
 
-    # Matrice: riga il progetto, colonna count del giorno corrispettivo
-    average_matrix = np.zeros(((len(urls)), 24), dtype=int)
+    # Non ha senso una matrice di riferimento per quanto detto sopra
+    # average_matrix = np.zeros(((len(urls)), 24), dtype=int)
 
     # Indice del repo corrente sotto analisi
     repo_index = 0
@@ -110,13 +133,13 @@ def average_commit(urls, average_file_type, verbose):
         git = Git(commit.project_path)
         logger.debug(f'Project: {commit.project_name} #Commits: {git.total_commits()}')  # total commits
         if verbose:  # log file + console
-            average_matrix = log_view(url, repo_index, git.total_commits(), average_matrix)
+            log_view(url, git.total_commits(), average_file_type)
         else:  # log file
-            average_matrix = bar_view(url, repo_index, git.total_commits(), average_matrix)
+            bar_view(url, git.total_commits(), average_file_type)
         repo_index += 1
 
     # Stampo a video il risultato
-    print_tabulate(rep_list, headers, average_matrix)
+    # print_tabulate(rep_list, headers, average_matrix)
 
     # CSV file
-    csv_generation(rep_list, headers, average_matrix)
+    # csv_generation(rep_list, headers, average_matrix)

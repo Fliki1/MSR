@@ -79,9 +79,7 @@ if __name__ == "__main__":
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
 
-    AverageCommit.average_commit(urls, verb)
-
-    if not week and not hour:  # nessuna opzione scelta: all
+    if not week and not hour and not average:  # nessuna opzione scelta: all
         WeekCommit.week_commit(urls, verb)
         HourCommit.hour_commit(urls, verb)
         AverageCommit.average_commit(urls, None, verb)

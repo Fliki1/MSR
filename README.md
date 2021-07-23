@@ -14,6 +14,10 @@ distribution and to identify in which day or in which part of the week it is.
 Similar to the previous one, in this case, the commit data are distributed throughout the hours of the day. 
 This metric shows in which part of the day, we usually have an activity peak and also provides a complete snapshot of the daily development activity.
 
+### 3. Activity per hour of the day:
+Similar to the previous one, in this case, the commit data are distributed throughout the hours of the day. 
+This metric shows in which part of the day, we usually have an activity peak and also provides a complete snapshot of the daily development activity.
+
 ## Quick usage:
 Git clone
 ````commandline
@@ -30,12 +34,13 @@ pip install -r requirements.txt
 ````
 Start script
 ````commandline
-python main.py [-h] [-w] [-hrs]
+python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-v]
 ````
 ````commandline
   -h, --help     show this help message and exit
   -w, --week     metrica: week commit
   -hrs, --hour   metrica: hour commit
+  -avg AVERAGE, --average AVERAGE   metrica: average commit distribution
   -v, --verbose  restituisce output verboso
 ````
 ### Requires
