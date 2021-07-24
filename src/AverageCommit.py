@@ -133,11 +133,14 @@ def csv_avg(project_name):
                 except KeyError:
                     data[header] = [value]
 
-    # extract the variables you want
-    int_list = data['ADD+DEL']      # calcolo della media: somma della lista/ len(int_list) arrotondato?
-    hash_list = data['Commit_hash'] # prima bisogna levare gli estremi 10 % dall'input?
-    #print(int_list)
-    #print(hash_list)
+    # extract the variables
+    int_list = data['ADD+DEL']              # calcolo della media: somma della lista/ len(int_list) arrotondato?
+    int_list = list(map(int, int_list))     # str list in int list
+    hash_list = data['Commit_hash']
+    percentuale = round(len(int_list)*0.1)  # 10%
+    # prima bisogna levare gli estremi 10%, dalla risultante calcolarne la media
+    avg = round(sum(int_list[percentuale:-percentuale])/len(int_list[percentuale:-percentuale]))    # average
+    print(hash_list[percentuale:-percentuale])
 
 
 def average_commit(urls, average_file_type, verbose):
