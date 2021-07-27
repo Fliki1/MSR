@@ -30,8 +30,6 @@ def log(verbos):
 def bar_view(repo, repo_name, total_commits, average_file_type, csv_headers):
     """ Average commit: bar console, non buono per benchmark visto il 0.1s di delay
         e anche il conteggio del calcolo: sum(1 for x in generator) oppure len(list(generator))"""
-    # csv info
-    #csv_headers = ["Commit_hash", "ADD+DEL"]
     # average_file_type
     if average_file_type is not None:
         with open("./data-results/average_commit_" + repo_name + ".csv", 'w') as f:
@@ -71,8 +69,6 @@ def bar_view(repo, repo_name, total_commits, average_file_type, csv_headers):
 
 def log_view(repo, repo_name, total_commits, average_file_type, csv_headers):
     """ Average commit: log console """
-    # csv info
-    #csv_headers = ["Commit_hash", "ADD+DEL"]
     if average_file_type is not None:
         with open("./data-results/average_commit_" + repo_name + ".csv", 'w') as f:
             # Header del csv
@@ -155,8 +151,6 @@ def csv_avg(project_name, csv_headers):
             final_score.append(int_act_score[percentuale:-percentuale][index])
     print(final_hash, final_score)
 
-    wow = len(final_score)
-    print(wow)
     with open("./final-results/average_commit_" + project_name + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_headers)

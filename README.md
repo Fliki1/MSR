@@ -14,10 +14,14 @@ distribution and to identify in which day or in which part of the week it is.
 Similar to the previous one, in this case, the commit data are distributed throughout the hours of the day. 
 This metric shows in which part of the day, we usually have an activity peak and also provides a complete snapshot of the daily development activity.
 
-### 3. Activity per hour of the day:
-Similar to the previous one, in this case, the commit data are distributed throughout the hours of the day. 
-This metric shows in which part of the day, we usually have an activity peak and also provides a complete snapshot of the daily development activity.
-
+### 3. Average commit distribution:
+This indicator is calculated starting from each commit activity.
+When we refer to commit activity, we mean all additions
+and deletions every commit contains; the sum of these two
+parameters is the "activity score" of the commit.
+By excluding 10% of samples from both extremities, the mean is calculated on the 80%
+of samples which is more accurate. Starting from this average value we consider all
+the commits that have an activity score included between -25% and +25% of the previusly average value.
 ## Quick usage:
 Git clone
 ````commandline
