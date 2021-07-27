@@ -22,6 +22,11 @@ parameters is the "activity score" of the commit.
 By excluding 10% of samples from both extremities, the mean is calculated on the 80%
 of samples which is more accurate. Starting from this average value we consider all
 the commits that have an activity score included between -25% and +25% of the previusly average value.
+
+### 4. Activity per week since the beginning of the current year:
+In this case we retrieve the week trend commit data for the current year or the last year of the project.
+Activity trend on the 52 weeks of a year.
+
 ## Quick usage:
 Git clone
 ````commandline
@@ -38,13 +43,14 @@ pip install -r requirements.txt
 ````
 Start script
 ````commandline
-python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-v]
+python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-v]
 ````
 ````commandline
   -h, --help     show this help message and exit
   -w, --week     metrica: week commit
   -hrs, --hour   metrica: hour commit
   -avg AVERAGE, --average AVERAGE   metrica: average commit distribution
+  -yr YEAR, --year YEAR             metrica: last year week commit
   -v, --verbose  restituisce output verboso
 ````
 ### Requires
@@ -71,7 +77,7 @@ Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 1. Creare i metodi:
    1. ~~commit per settimana~~
     1. commit al mese?
-    1. commit all'anno?
+    1. ~~commit all'anno?~~
 1. Vedere se funziona:
 ````commandline
 python3 -m venv venv

@@ -62,19 +62,22 @@ def arg_parse():
     parser.add_argument("-w", "--week", help="metrica: week commit", action="store_true")
     parser.add_argument("-hrs", "--hour", help="metrica: hour commit", action="store_true")
     parser.add_argument("-avg", "--average", type=str, help="metrica: average commit distribution")
-    parser.add_argument("-yr", "--year", help="metrica: last year week commit", action="store_true")
+    parser.add_argument("-yr", "--year",  type=str, help="metrica: last year week commit")
     parser.add_argument("-v", "--verbose", help="restituisce output verboso", action="store_true")
     args = parser.parse_args()
     avg_set = False
-    if (args.average != None): # Solo per gestire la average_commit
+    year_set = False
+    if (args.average != None):  # Solo per gestire la average_commit
         avg_set = True
-    return args.verbose, args.week, args.hour, avg_set, args.average, args.year
+    if (args.year == 'True'):     # Solo per gestire last year week commit
+        year_set = True
+    return args.verbose, args.week, args.hour, avg_set, args.average, args.year, year_set
 
 
 if __name__ == "__main__":
 
     # Log: gestisce sia la console che il salvataggio dei log [-v] (diversi per modulo)
-    verb, week, hour, average, average_file_type, lastyear = arg_parse()  # args parse: verbose choise | week commit ?
+    verb, week, hour, average, average_file_type, lastyear, current = arg_parse()  # args parse: verbose choise | week commit ?
     log(verb)  # log file
 
     logger.info('Inizio del M.S.R.')
@@ -84,7 +87,7 @@ if __name__ == "__main__":
         WeekCommit.week_commit(urls, verb)
         HourCommit.hour_commit(urls, verb)
         AverageCommit.average_commit(urls, None, verb)
-        LastYear_WeekCommit.last_year_week_commit(urls, verb)
+        LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
     else:
         if week:
             WeekCommit.week_commit(urls, verb)
@@ -93,6 +96,6 @@ if __name__ == "__main__":
         if average:
             AverageCommit.average_commit(urls, average_file_type, verb)
         if lastyear:
-            LastYear_WeekCommit.last_year_week_commit(urls, verb)
+            LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
 
     logger.info('Fine del M.S.R.')
