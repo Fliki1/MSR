@@ -27,6 +27,11 @@ the commits that have an activity score included between -25% and +25% of the pr
 In this case we retrieve the week trend commit data for the current year or the last year of the project.
 Activity trend on the 52 weeks of a year.
 
+### 5. Lines of code per week:
+The lines of code metric shows the number of lines for every week. 
+This indicator is very useful to study the evolution of the project as it highlights the
+development phases and helps defining the adopted methodology.
+
 ## Quick usage:
 Git clone
 ````commandline

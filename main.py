@@ -6,7 +6,7 @@ from giturlparse import parse
 # TODO: continuare a seguire la doc di PyDriller ufficiale
 # TODO: prendere spunto da Commit_modificati.py e altro contenuto nella cartella clone ubuntu!
 
-from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit
+from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit, LineCodeCommit
 
 # create logger
 logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
@@ -63,6 +63,7 @@ def arg_parse():
     parser.add_argument("-hrs", "--hour", help="metrica: hour commit", action="store_true")
     parser.add_argument("-avg", "--average", type=str, help="metrica: average commit distribution")
     parser.add_argument("-yr", "--year",  type=str, help="metrica: last year week commit")
+    parser.add_argument("-l", "--line", help="metrica: line trend commit", action="store_true")
     parser.add_argument("-v", "--verbose", help="restituisce output verboso", action="store_true")
     args = parser.parse_args()
     avg_set = False
@@ -71,23 +72,23 @@ def arg_parse():
         avg_set = True
     if (args.year == 'True'):     # Solo per gestire last year week commit
         year_set = True
-    return args.verbose, args.week, args.hour, avg_set, args.average, args.year, year_set
+    return args.verbose, args.week, args.hour, avg_set, args.average, args.year, year_set, args.line
 
 
 if __name__ == "__main__":
-
     # Log: gestisce sia la console che il salvataggio dei log [-v] (diversi per modulo)
-    verb, week, hour, average, average_file_type, lastyear, current = arg_parse()  # args parse: verbose choise | week commit ?
+    verb, week, hour, average, average_file_type, lastyear, current, line = arg_parse()  # args parse: verbose choise | week commit ?
     log(verb)  # log file
 
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
 
-    if not week and not hour and not average and not lastyear:  # nessuna opzione scelta: all
+    if not week and not hour and not average and not lastyear and not line:  # nessuna opzione scelta: all
         WeekCommit.week_commit(urls, verb)
         HourCommit.hour_commit(urls, verb)
         AverageCommit.average_commit(urls, None, verb)
         LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
+        LineCodeCommit.linecode_commit(urls, verb)
     else:
         if week:
             WeekCommit.week_commit(urls, verb)
@@ -97,5 +98,7 @@ if __name__ == "__main__":
             AverageCommit.average_commit(urls, average_file_type, verb)
         if lastyear:
             LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
+        if line:
+            LineCodeCommit.linecode_commit(urls, verb)
 
     logger.info('Fine del M.S.R.')

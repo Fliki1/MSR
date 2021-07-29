@@ -43,9 +43,11 @@ def bar_view(repo, repo_name, total_commits, average_file_type, csv_headers):
                                                      prefix='Progress:', suffix='Complete', length=50):
                 logger.info(f'Hash: {commit.hash}, '
                             f'Average type: {average_file_type}, '
-                            f'Added+Deleted: {commit.lines}')
+                            f'Added+Deleted: {commit.lines}, '
+                            f'Time: {commit.committer_date}')
                 writer.writerow({csv_headers[0]: commit.hash,  # Commit_hash
-                                 csv_headers[1]: commit.lines})  # Commit_ADD_DEL
+                                 csv_headers[1]: commit.lines,  # Commit_ADD_DEL
+                                 csv_headers[2]: commit.committer_date})  # Time
                 time.sleep(0.1)
         logger.info(f'Average Commit: {repo_name} ✔')
     else:   # no average_file_type
@@ -59,9 +61,11 @@ def bar_view(repo, repo_name, total_commits, average_file_type, csv_headers):
                 logger.info(
                     f'{commit_count}/{total_commits}: Hash: {commit.hash}, '
                     f'Average type: {average_file_type}, '
-                    f'Added+Deleted: {commit.lines}')
+                    f'Added+Deleted: {commit.lines}, '
+                    f'Time: {commit.committer_date}')
                 writer.writerow({csv_headers[0]: commit.hash,  # Commit_hash
-                                 csv_headers[1]: commit.lines})  # Commit_ADD_DEL
+                                 csv_headers[1]: commit.lines,  # Commit_ADD_DEL
+                                 csv_headers[2]: commit.committer_date})  # Time
                 time.sleep(0.1)
             commit_count += 1
         logger.info(f'Average Commit: {repo_name} ✔')
@@ -78,9 +82,11 @@ def log_view(repo, repo_name, total_commits, average_file_type, csv_headers):
                                      only_modifications_with_file_types=[average_file_type]).traverse_commits():
                 logger.info(f'Hash: {commit.hash}, '
                             f'Average type: {average_file_type}, '
-                            f'Added+Deleted: {commit.lines}')
+                            f'Added+Deleted: {commit.lines}, '
+                            f'Time: {commit.committer_date}')
                 writer.writerow({csv_headers[0]: commit.hash,  # Commit_hash
-                                 csv_headers[1]: commit.lines})  # Commit_ADD_DEL
+                                 csv_headers[1]: commit.lines,  # Commit_ADD_DEL
+                                 csv_headers[2]: commit.committer_date})  # Time
         logger.info(f'Average Commit: {repo_name} ✔')
     else:   # su tutto
         commit_count = 1
@@ -92,21 +98,13 @@ def log_view(repo, repo_name, total_commits, average_file_type, csv_headers):
                 logger.info(
                     f'{commit_count}/{total_commits}: Hash: {commit.hash}, '
                     f'Average type: {average_file_type}, '
-                    f'Added+Deleted: {commit.lines}')
-                commit_count += 1
+                    f'Added+Deleted: {commit.lines}, '
+                    f'Time: {commit.committer_date}')
                 writer.writerow({csv_headers[0]: commit.hash,  # Commit_hash
-                                 csv_headers[1]: commit.lines})  # Commit_ADD_DEL
+                                 csv_headers[1]: commit.lines,  # Commit_ADD_DEL
+                                 csv_headers[2]: commit.committer_date})  # Time
         logger.info(f'Average Commit: {repo_name} ✔')
 
-
-def repo_list(urls):
-    """ Lista nomi dei progetti dei git urls """
-    rep_list = []
-    for proj in urls:
-        repo = Repository(path_to_repo=proj).traverse_commits()
-        commit = next(repo)
-        rep_list.append(commit.project_name)
-    return rep_list
 
 def csv_sort(project_name):
     reader = csv.DictReader(open("./data-results/average_commit_" + project_name + ".csv", 'r'))
@@ -115,6 +113,7 @@ def csv_sort(project_name):
     writer = csv.DictWriter(open("./data-results/average_commit_" + project_name + ".csv", 'w'), reader.fieldnames)
     writer.writeheader()
     writer.writerows(result)
+
 
 def csv_avg(project_name, csv_headers):
     # open the file in universal line ending mode
@@ -131,6 +130,7 @@ def csv_avg(project_name, csv_headers):
 
     # extract the variables
     hash_list = data['Commit_hash']
+    time = data['Time']
     str_act_score = data['ADD+DEL']                 # calcolo della media: somma della lista/ len(int_list) arrotondato?
     int_act_score = list(map(int, str_act_score))   # str list in int list
 
@@ -145,19 +145,22 @@ def csv_avg(project_name, csv_headers):
 
     final_hash = []
     final_score = []
+    final_time = []
     for index, act_score in enumerate(int_act_score[percentuale:-percentuale]):
         if act_score >= avg-range and act_score <= avg+range:
             final_hash.append(hash_list[percentuale:-percentuale][index])
             final_score.append(int_act_score[percentuale:-percentuale][index])
-    print(final_hash, final_score)
+            final_time.append(time[percentuale:-percentuale][index])
+    print(final_hash, final_score, final_time)
 
     with open("./final-results/average_commit_" + project_name + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_headers)
         writer.writeheader()
         for i, value in enumerate(final_hash):
-            writer.writerow({csv_headers[0]: final_hash[i],  # Commit_hash
-                             csv_headers[1]: final_score[i]})  # Commit_ADD_DEL
+            writer.writerow({csv_headers[0]: final_hash[i],     # Commit_hash
+                             csv_headers[1]: final_score[i],    # Commit_ADD_DEL
+                             csv_headers[2]: final_time[i]})    # Time
     logger.info(f'Final average Commit: {project_name} ✔')
 
 
@@ -167,12 +170,10 @@ def average_commit(urls, average_file_type, verbose):
     log(verbose)
 
     # csv header
-    csv_headers = ["Commit_hash", "ADD+DEL"]
+    csv_headers = ["Commit_hash", "ADD+DEL", "Time"]
 
     # Indice del repo corrente sotto analisi
     repo_index = 0
-
-    rep_list = repo_list(urls)
 
     # Invocazione console/bar per ogni repo corrispettivo
     for url in urls:
