@@ -67,15 +67,27 @@ def log_view(repo, repo_name, total_commits, csv_headers):
         writer = csv.DictWriter(f, fieldnames=csv_headers)
         writer.writeheader()
         total_line = 0
+        prec_commit = None
         for commit in Repository(path_to_repo=repo).traverse_commits():
             logger.info(f'Hash: {commit.hash}, '
                         f'Add: {commit.insertions}, '
                         f'Del: {commit.deletions}, '
                         f'Time: {commit.committer_date}')
-            total_line = total_line + commit.insertions - commit.deletions
-            writer.writerow({csv_headers[0]: commit.hash,  # Commit_hash
-                             csv_headers[1]: total_line,  # Line
-                             csv_headers[2]: commit.committer_date})  # Time
+
+            if prec_commit == None:  # Forse senza if e prec_commit = commit standard a ogni ciclo
+                prec_commit = commit
+                total_line = total_line + prec_commit.insertions - prec_commit.deletions
+                continue
+
+            # conteggio delle line commit: della stessa settimana nello stesso anno
+            if prec_commit.committer_date.year == commit.committer_date.year and \
+                    prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
+                total_line = total_line + commit.insertions - commit.deletions
+            else:  # cambio di settimana salvo gli esiti
+                writer.writerow({csv_headers[0]: commit.committer_date,  # Time
+                                 csv_headers[1]: total_line,  # Line
+                                 csv_headers[2]: commit.committer_date.isocalendar()[1]})  # Week
+            prec_commit = commit
     logger.info(f'Line Commit: {repo_name} ✔')
 
 

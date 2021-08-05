@@ -30,7 +30,7 @@ Activity trend on the 52 weeks of a year.
 ### 5. Lines of code per week:
 The lines of code metric shows the number of lines for every week. 
 This indicator is very useful to study the evolution of the project as it highlights the
-development phases and helps defining the adopted methodology.
+development phases and helps defining the adopted methodology, from the beginning to the end of project.
 
 ## Quick usage:
 Git clone
@@ -48,7 +48,7 @@ pip install -r requirements.txt
 ````
 Start script
 ````commandline
-python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-v]
+python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-v]
 ````
 ````commandline
   -h, --help     show this help message and exit
@@ -56,6 +56,7 @@ python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-v]
   -hrs, --hour   metrica: hour commit
   -avg AVERAGE, --average AVERAGE   metrica: average commit distribution
   -yr YEAR, --year YEAR             metrica: last year week commit
+  -l, --line     metrica: line trend commit
   -v, --verbose  restituisce output verboso
 ````
 ### Requires
@@ -78,11 +79,6 @@ Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 
 #### TODO:
 
-1. ~~Esportare i requisiti del progetto e renderli disponibili su git~~
-1. Creare i metodi:
-   1. ~~commit per settimana~~
-    1. commit al mese?
-    1. ~~commit all'anno?~~
 1. Vedere se funziona:
 ````commandline
 python3 -m venv venv
@@ -92,5 +88,3 @@ E poi installare i requirements:
 ````commandline
 pip install -r requirements.txt
 ````
-~~1. Gestire un output iniziale tipo: https://github.com/paramt/url-checker/tree/0abea3252caa144bd1e6b7786d715b6ff367a4be~~
-~~1. loggingngs~~
