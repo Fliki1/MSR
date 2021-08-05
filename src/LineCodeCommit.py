@@ -36,23 +36,26 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
         prec_commit = None
         for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(), total_commits,
                                                  prefix='Progress:', suffix='Complete', length=50):
+
             logger.info(f'Hash: {commit.hash}, '
                         f'Add: {commit.insertions}, '
                         f'Del: {commit.deletions}, '
                         f'Time: {commit.committer_date}')
-            # total_line = total_line + commit.insertions - commit.deletions
-            if prec_commit.committer_date.year == commit.committer_date.year and \
-                    prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
-                print('ciao, stesso anno e stessa settimana', prec_commit.committer_date.year, commit.committer_date.year,
-                      prec_commit.committer_date, commit.committer_date)
-                total_line = total_line + commit.insertions - commit.deletions
-                prec_commit = commit
-            """else:
-                writer.writerow({csv_headers[0]: commit.hash,  # Commit_hash
-                                 csv_headers[1]: total_line,  # Line
-                                 csv_headers[2]: commit.committer_date.isocalendar()[1]})  # Time"""
+
             if prec_commit == None: # Forse senza if e prec_commit = commit standard a ogni ciclo
                 prec_commit = commit
+                total_line = total_line + prec_commit.insertions - prec_commit.deletions
+                continue
+
+            # conteggio delle line commit: della stessa settimana nello stesso anno
+            if prec_commit.committer_date.year == commit.committer_date.year and \
+                prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
+                total_line = total_line + commit.insertions - commit.deletions
+            else:   # cambio di settimana salvo gli esiti
+                writer.writerow({csv_headers[0]: commit.committer_date,  # Time
+                                 csv_headers[1]: total_line,  # Line
+                                 csv_headers[2]: commit.committer_date.isocalendar()[1]})  # Week
+            prec_commit = commit
             time.sleep(0.1)
     logger.info(f'Line Commit: {repo_name} ✔')
 
