@@ -41,6 +41,9 @@ settimane impiegate allo sviluppo +1 dedicata al Testing.
 La metrica si basa sulla ricerca e report di questa finestra temporale
 con relative conclusioni.
 
+_I dati raccolti NON riportano la media, ma il count settimale dei commit._
+
+
 ## Quick usage:
 Git clone
 ````commandline
