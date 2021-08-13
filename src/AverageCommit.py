@@ -135,13 +135,13 @@ def csv_avg(project_name, csv_headers):
     int_act_score = list(map(int, str_act_score))   # str list in int list
 
     percentuale = round(len(int_act_score)*0.1)     # 10%
-    print('percentuale 10% ', percentuale)
+    #print('percentuale 10% ', percentuale)
     # prima bisogna levare gli estremi 10%, dalla risultante calcolarne la media
     avg = round(sum(int_act_score[percentuale:-percentuale])/len(int_act_score[percentuale:-percentuale]))    # average
-    print('activity score ', int_act_score[percentuale:-percentuale])
-    print('avg ', avg)
+    #print('activity score ', int_act_score[percentuale:-percentuale])
+    #print('avg ', avg)
     range = round(avg * 0.25)                       # range -25% + 25%
-    print('range ', range)
+    #print('range ', range)
 
     final_hash = []
     final_score = []
@@ -151,7 +151,7 @@ def csv_avg(project_name, csv_headers):
             final_hash.append(hash_list[percentuale:-percentuale][index])
             final_score.append(int_act_score[percentuale:-percentuale][index])
             final_time.append(time[percentuale:-percentuale][index])
-    print(final_hash, final_score, final_time)
+    #print(final_hash, final_score, final_time)
 
     with open("./final-results/average_commit_" + project_name + ".csv", 'w') as f:
         # Header del csv

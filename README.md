@@ -32,6 +32,15 @@ The lines of code metric shows the number of lines for every week.
 This indicator is very useful to study the evolution of the project as it highlights the
 development phases and helps defining the adopted methodology, from the beginning to the end of project.
 
+### 6. Sprint week commit trend:
+Metrica per individuare la possibile presenza di un 
+approccio Agile: Scrum Sprint, che il team di sviluppo 
+software ha adottato sul singolo repository.
+Ciascuna delle Sprint sono costituite essenzialmente da 3 
+settimane impiegate allo sviluppo +1 dedicata al Testing.
+La metrica si basa sulla ricerca e report di questa finestra temporale
+con relative conclusioni.
+
 ## Quick usage:
 Git clone
 ````commandline
@@ -57,6 +66,7 @@ python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-v]
   -avg AVERAGE, --average AVERAGE   metrica: average commit distribution
   -yr YEAR, --year YEAR             metrica: last year week commit
   -l, --line     metrica: line trend commit
+  -s, --sprint   metrica: sprint weeks commit
   -v, --verbose  restituisce output verboso
 ````
 ### Requires
