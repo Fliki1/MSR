@@ -38,6 +38,8 @@ approccio Agile: Scrum Sprint, che il team di sviluppo
 software ha adottato sul singolo repository.
 Ciascuna delle Sprint sono costituite essenzialmente da 3 
 settimane impiegate allo sviluppo +1 dedicata al Testing.
+La ricerca viene effettuata sia sullo storico del repository in totale
+che sui singoli branch che lo costituiscono.
 La metrica si basa sulla ricerca e report di questa finestra temporale
 con relative conclusioni.
 

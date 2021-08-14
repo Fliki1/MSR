@@ -1,7 +1,7 @@
 import csv
 import time
 import logging
-
+import os
 from src import ProgressionBar
 from pydriller import Repository
 from pydriller import Git
@@ -94,7 +94,10 @@ def log_view(repo, repo_name, csv_headers):
 
 def branch_view(repo, branch, repo_name, total_commits, csv_branch):
     """ Sprint Weeks: bar console, non buono per benchmark visto il 0.1s di delay """
-    with open("./final-results/sprint_week_" + repo_name + ".csv", 'w') as f:
+    if not os.path.exists("./final-results/"+repo_name):
+        os.makedirs("./final-results/"+repo_name)
+    branch_name = branch.split('/')     # take only the name of branch
+    with open("./final-results/"+repo_name+"/sprint_week_" + branch_name[len(branch_name) - 1] + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_branch)
         writer.writeheader()
@@ -142,7 +145,7 @@ def sprint_commit(urls, verbose):
         repo = Repository(path_to_repo=url).traverse_commits()
         commit = next(repo)
         logger.info(f'Project: {commit.project_name}')  # project name
-        print(f'(sprint_week_commit) Project: {commit.project_name}')
+        print(f'(sprint_week_all_commit) Project: {commit.project_name}')
 
         # Repo info
         git = Git(commit.project_path)
@@ -157,16 +160,11 @@ def sprint_commit(urls, verbose):
         # Branch
         r = Repo(commit.project_path)
         remote_refs = r.remote().refs
-        csv_branch = ["Commit_hash", "Sprint_week", "Time"]
-        # repo_heads_names = [h.name for h in remote_refs]
+        csv_branch = ["Day", "Sprint_week", "Time"]
+
         for refs in remote_refs:
-            csv_branch[0] = refs.name
-            print(csv_branch)
-            #bar_view(url, refs.name, commit.project_name, git.total_commits(), csv_branch)
-
-
+            print(f'(sprint_week_commit) Project: {commit.project_name} Branch: {refs.name}')
+            branch_view(url, refs.name, commit.project_name, git.total_commits(), csv_branch)
         repo_index += 1
 
-# TODO: CALCOLARE LA MEDIA! (dopo con gli esiti stessi)
-# TODO: testare i branch
-# TODO: stesso metodo ma per singolo branch
+# TODO: calcolare la media! dagli esiti stessi?
