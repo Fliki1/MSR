@@ -45,6 +45,15 @@ con relative conclusioni.
 
 _I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
+Plot effettuato con `Sprint_plot.py`.
+_Nota: la metrica non conteggia le settimane senza commit._
+#### Esempio 1: master branch
+
+![Screenshot](fig/sprint_branch_es_1.png)
+
+#### Esempio 2: master banch
+![Screenshot](fig/sprint_branch_es_2.png)
+
 
 ## Quick usage:
 Git clone

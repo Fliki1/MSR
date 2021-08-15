@@ -160,7 +160,7 @@ def sprint_commit(urls, verbose):
         # Branch
         r = Repo(commit.project_path)
         remote_refs = r.remote().refs
-        csv_branch = ["Day", "Sprint_week", "Time"]
+        csv_branch = ["Day", "Sprint_week", "Week"]
 
         for refs in remote_refs:
             print(f'(sprint_week_commit) Project: {commit.project_name} Branch: {refs.name}')
