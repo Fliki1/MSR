@@ -4,7 +4,6 @@ import logging
 from giturlparse import parse
 
 # TODO: continuare a seguire la doc di PyDriller ufficiale
-# TODO: prendere spunto da Commit_modificati.py e altro contenuto nella cartella clone ubuntu!
 
 from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit, LineCodeCommit, SprintWeeks
 
