@@ -25,7 +25,7 @@ def check_url(urls):
             url_list.append(url)
             logger.info("✔ " + url)
             continue
-        else:                                           # check: git HTTPS
+        else:                                           # check: local repository
             try:
                 _ = git.Repo(url).git_dir
                 url_list.append(url)

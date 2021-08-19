@@ -4,7 +4,12 @@ Creazione ex novo del progetto di M.S.R. dei repository in Git.
 Riconversione ed ampliamento del progetto esistente da Java ☕ -> Python 3 🐍
 
 ## Details
-Il progetto consiste nella creazione di una serie di metriche specifie e peculiari per analizzare, un repository o una lista di questi, seguendo i dettami della M.S.R. al fine di ottenere possibili informazioni utili per l'Ingegneria del Software
+Il progetto consiste nella creazione di una serie di metriche 
+specifie e peculiari per analizzare, un repository o una lista
+di questi (.git url e local repository), seguendo i dettami 
+della M.S.R. al fine di ottenere possibili informazioni utili 
+per l'Ingegneria del Software
+
 
 ### 1. Activity per day of the week:
 To calculate these values we collected and aggregated (in particular summarized) the commits for each day of the week. The goal is to have a graphical representation of the commit
