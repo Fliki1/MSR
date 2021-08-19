@@ -1,6 +1,6 @@
 import argparse
 import logging
-
+import git
 from giturlparse import parse
 
 # TODO: continuare a seguire la doc di PyDriller ufficiale
@@ -21,11 +21,17 @@ def check_url(urls):
     """ Validate url presi in input, return lista url validi e non duplicati """
     url_list = []
     for url in urls:
-        if parse(url).valid & url.endswith(".git"):
+        if parse(url).valid & url.endswith(".git"):     # check: git HTTPS
             url_list.append(url)
             logger.info("✔ " + url)
-        else:  # evitabile questo else
-            logger.debug("❌ " + url)
+            continue
+        else:                                           # check: git HTTPS
+            try:
+                _ = git.Repo(url).git_dir
+                url_list.append(url)
+                logger.info("✔ " + url)
+            except:
+                logger.debug("❌ " + url)                # no git repository
     logger.info('Urls validati')
     return url_list
 
@@ -82,6 +88,7 @@ if __name__ == "__main__":
 
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
+    print(urls)
 
     if not week and not hour and not average and not lastyear and not line and not sprint:  # nessuna opzione scelta: all
         WeekCommit.week_commit(urls, verb)
