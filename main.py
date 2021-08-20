@@ -88,7 +88,6 @@ if __name__ == "__main__":
 
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
-    print(urls)
 
     if not week and not hour and not average and not lastyear and not line and not sprint:  # nessuna opzione scelta: all
         WeekCommit.week_commit(urls, verb)

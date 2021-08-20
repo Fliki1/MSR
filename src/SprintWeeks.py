@@ -28,6 +28,7 @@ def log(verbos):
 
 def bar_view(repo, repo_name, total_commits, csv_headers):
     """ Sprint Weeks: bar console, non buono per benchmark visto il 0.1s di delay """
+    author = []
     with open("./data-results/sprint_week_" + repo_name + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_headers)
@@ -37,9 +38,13 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
         for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(), total_commits,
                                                  prefix='Progress:', suffix='Complete', length=50):
 
+            if commit.author.email not in author:
+                author.append(commit.author.email)
+
             logger.info(f'Hash: {commit.hash}, '
                         f'Week: {commit.committer_date.isocalendar()[1]}, '
-                        f'Time: {commit.committer_date}')
+                        f'Time: {commit.committer_date}, '
+                        f'Author: {commit.author.email}')
 
             if prec_commit == None:
                 prec_commit = commit
@@ -53,8 +58,10 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
             else:   # cambio di settimana salvo gli esiti
                 writer.writerow({csv_headers[0]: commit.committer_date,  # Time
                                  csv_headers[1]: week_commit,  # Commit della settimana
-                                 csv_headers[2]: commit.committer_date.isocalendar()[1]})  # Week
+                                 csv_headers[2]: commit.committer_date.isocalendar()[1], # Week
+                                 csv_headers[3]: len(author)})  # Authors
                 week_commit = 1     # reset
+                author = []
             prec_commit = commit
             time.sleep(0.1)
     logger.info(f'Sprint Week: {repo_name} ✔')
@@ -62,6 +69,7 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
 
 def log_view(repo, repo_name, csv_headers):
     """ Sprint Weeks: log console """
+    author = []
     with open("./data-results/sprint_week_" + repo_name + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_headers)
@@ -69,10 +77,14 @@ def log_view(repo, repo_name, csv_headers):
         week_commit = 0
         prec_commit = None
         for commit in Repository(path_to_repo=repo).traverse_commits():
+
+            if commit.author.email not in author:
+                author.append(commit.author.email)
+
             logger.info(f'Hash: {commit.hash}, '
-                        f'Add: {commit.insertions}, '
-                        f'Del: {commit.deletions}, '
-                        f'Time: {commit.committer_date}')
+                        f'Week: {commit.committer_date.isocalendar()[1]}, '
+                        f'Time: {commit.committer_date}, '
+                        f'Author: {commit.author.email}')
 
             if prec_commit == None:  # Forse senza if e prec_commit = commit standard a ogni ciclo
                 prec_commit = commit
@@ -86,8 +98,10 @@ def log_view(repo, repo_name, csv_headers):
             else:  # cambio di settimana salvo gli esiti
                 writer.writerow({csv_headers[0]: commit.committer_date,  # Time
                                  csv_headers[1]: week_commit,  # Commit della settimana
-                                 csv_headers[2]: commit.committer_date.isocalendar()[1]})  # Week
+                                 csv_headers[2]: commit.committer_date.isocalendar()[1], # Week
+                                 csv_headers[3]: len(author)})  # Authors
                 week_commit = 1     #reset
+                author = []
             prec_commit = commit
     logger.info(f'Sprint Week: {repo_name} ✔')
 
@@ -97,6 +111,7 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
     if not os.path.exists("./final-results/"+repo_name):
         os.makedirs("./final-results/"+repo_name)
     branch_name = branch.split('/')     # take only the name of branch
+    author = []
     with open("./final-results/"+repo_name+"/sprint_week_" + branch_name[len(branch_name) - 1] + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_branch)
@@ -106,9 +121,13 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
         for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo, only_in_branch=branch).traverse_commits(),
                                                  total_commits, prefix='Progress:', suffix='Complete', length=50):
 
+            if commit.author.email not in author:
+                author.append(commit.author.email)
+
             logger.info(f'Hash: {commit.hash}, '
                         f'Week: {commit.committer_date.isocalendar()[1]}, '
-                        f'Time: {commit.committer_date}')
+                        f'Time: {commit.committer_date}, '
+                        f'Author: {commit.author.email}')
 
             if prec_commit == None:
                 prec_commit = commit
@@ -122,8 +141,10 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
             else:   # cambio di settimana salvo gli esiti
                 writer.writerow({csv_branch[0]: commit.committer_date,  # Branch_name che prende il Time come valori
                                  csv_branch[1]: week_commit,  # Commit della settimana
-                                 csv_branch[2]: commit.committer_date.isocalendar()[1]})  # Week
+                                 csv_branch[2]: commit.committer_date.isocalendar()[1], # Week
+                                 csv_branch[3]: len(author)})  # Authors
                 week_commit = 1     # reset
+                author = []
             prec_commit = commit
             time.sleep(0.1)
     logger.info(f'Sprint Week Branch {branch}: {repo_name} ✔')
@@ -135,7 +156,7 @@ def sprint_commit(urls, verbose):
     log(verbose)
 
     # csv header
-    csv_headers = ["Commit_hash", "Sprint_week", "Time"]
+    csv_headers = ["Commit_hash", "Sprint_week", "Time", "Authors"]
 
     # Indice del repo corrente sotto analisi
     repo_index = 0
@@ -160,7 +181,7 @@ def sprint_commit(urls, verbose):
         # Branch
         r = Repo(commit.project_path)
         remote_refs = r.remote().refs
-        csv_branch = ["Day", "Sprint_week", "Week"]
+        csv_branch = ["Day", "Sprint_week", "Week", "Authors"]
 
         for refs in remote_refs:
             print(f'(sprint_week_commit) Project: {commit.project_name} Branch: {refs.name}')
