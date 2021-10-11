@@ -50,7 +50,8 @@ con relative conclusioni.
 
 _I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
-Plot effettuato con `Sprint_plot.py` specificando il path dove sono presenti i CSV file.
+Plot effettuato con [Sprint_plot.py](Sprint_plot.py) specificando il path dove sono presenti i CSV file dentro la cartella [Final result](./final-results).
+
 _Nota: la metrica non conteggia le settimane senza commit._
 #### Esempio 1: master branch
 
