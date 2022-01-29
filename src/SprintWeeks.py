@@ -6,7 +6,6 @@ from src import ProgressionBar
 from pydriller import Repository
 from pydriller import Git
 from git import Repo
-import numpy as np
 
 logger = logging.getLogger(__name__)  # nome del modulo corrente (SprintWeeks.py)
 
@@ -91,7 +90,7 @@ def log_view(repo, repo_name, csv_headers):
                 week_commit = week_commit + 1
                 continue
 
-            # conteggio delle line commit: della stessa settimana nello stesso anno
+            # conteggio dei commit: della stessa settimana nello stesso anno
             if prec_commit.committer_date.year == commit.committer_date.year and \
                     prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
@@ -156,7 +155,7 @@ def sprint_commit(urls, verbose):
     log(verbose)
 
     # csv header
-    csv_headers = ["Commit_hash", "Sprint_week", "Time", "Authors"]
+    csv_headers = ["Day", "Sprint_week", "Week", "Authors"]
 
     # Indice del repo corrente sotto analisi
     repo_index = 0
@@ -178,7 +177,7 @@ def sprint_commit(urls, verbose):
         else:  # log file
             bar_view(url, commit.project_name, git.total_commits(), csv_headers)
 
-        # Branch
+        # Sprint in all Branch
         r = Repo(commit.project_path)
         remote_refs = r.remote().refs
         csv_branch = ["Day", "Sprint_week", "Week", "Authors"]

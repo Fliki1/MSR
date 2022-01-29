@@ -1,4 +1,4 @@
-import numpy as np
+# import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 # change path all'occorrenza
 path = input("Enter CSV Repositories: ")
 #path = 'final-results/awesome-docker/sprint_week_master.csv'
+#oppure path = 'data-results/sprint_week_nomerepository.csv'
 path_split = path.split('/')
 
 
