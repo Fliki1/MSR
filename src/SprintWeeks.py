@@ -180,11 +180,10 @@ def sprint_commit(urls, verbose):
         # Sprint in all Branch
         r = Repo(commit.project_path)
         remote_refs = r.remote().refs
-        csv_branch = ["Day", "Sprint_week", "Week", "Authors"]
 
         for refs in remote_refs:
             print(f'(sprint_week_commit) Project: {commit.project_name} Branch: {refs.name}')
-            branch_view(url, refs.name, commit.project_name, git.total_commits(), csv_branch)
+            branch_view(url, refs.name, commit.project_name, git.total_commits(), csv_headers)
         repo_index += 1
 
 # TODO: calcolare la media! dagli esiti stessi?
