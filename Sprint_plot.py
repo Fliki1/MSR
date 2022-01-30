@@ -67,7 +67,7 @@ for anno in anni:
 full_datax = lista_full_data[lista_full_data.index(datax[0]):lista_full_data.index(datax[len(datax)-1])+1]
 # restringo la lista, prendendo l'indice del primo valore di datax a noi lecito e l'indice successivo al'ultimo valore lecito di datax, perche' il range funziona cosi
 
-# Commit settimanali insieme agli 0 commit delle settimane non conteggiate
+# Sprint commit settimanali + settimane con 0 commit non conteggiate prima
 full_sprint = [data['Sprint_week'][datax.index(giorno)] if giorno in datax else 0 for giorno in full_datax]
 
 plt.figure(4)
@@ -77,4 +77,23 @@ plt.xlabel('Weekly commits')        # x
 plt.ylabel('Number of changes')     # y
 plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
 plt.title('Sprint Weekly trend [not average]', fontsize=15)
+plt.show()
+
+# Join del main branch con un sotto branch: text
+text_path = input("Enter CSV Repositories Test to join: ")
+text_path_split = text_path.split('/')
+text_data = pd.read_csv(text_path) # prendo i dati del branch text
+
+text_datax = [x[:4] +"-"+ str(y) for x, y in zip(text_data['Day'], text_data['Week'])]     # dati nella forma anno-settimana
+
+plt.figure(5)
+barlist = plt.bar(datax, data['Sprint_week'])
+for indice, valore in enumerate(datax):
+    if valore in text_datax:
+        barlist[indice].set_color('g')
+plt.xticks(datax, datax, rotation=25)     # x
+plt.xlabel('Weekly commits')        # x
+plt.ylabel('Number of changes')     # y
+plt.suptitle(path_split[len(path_split) - 1]+" "+text_path_split[len(text_path_split)-1], fontsize=10)
+plt.title('Sprint Weekly trend + selected branch highlight', fontsize=15)
 plt.show()

@@ -132,6 +132,8 @@ Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
 ![Screenshot](fig/sprint%20+%20autori.png)
 ##### Sprint nell'intero storico attuale del progetto
 ![Screenshot](fig/sprint%20week%20+%20no%20commit%20week.png)
+##### Main branch + sotto branch (es: testing)
+![Screenshot](fig/main_branch_join_branch.png)
 
 #### TODO:
 
