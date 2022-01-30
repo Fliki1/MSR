@@ -50,15 +50,19 @@ con relative conclusioni.
 
 _I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
-Plot effettuato con [Sprint_plot.py](Sprint_plot.py) specificando il path dove sono presenti i CSV file dentro la cartella [Final result](./final-results).
+_Nota: la metrica Sprint non conteggia e non riporta le settimane senza commit._
 
-_Nota: la metrica non conteggia le settimane senza commit._
-#### Esempio 1: master branch
-
-![Screenshot](fig/sprint_branch_es_1.png)
-
-#### Esempio 2: master banch
-![Screenshot](fig/sprint_branch_es_2.png)
+### Requires
+[comment]: <> (Pronto prova)
+* Python 3.8
+* Git
+* [PyDriller](https://github.com/ishepard/pydriller): a  Python framework that helps developers in analyzing Git repositories
+* [giturlparse](https://pypi.org/project/giturlparse/): Parse & rewrite git urls (supports GitHub, Bitbucket, FriendCode, Assembla, Gitlab …)
+#### Requirements:
+requirements.txt comprende la lista delle third party packages con i relativi version numbers
+````commandline
+pip freeze > requirements.txt
+````
 
 ## Quick usage:
 Git clone
@@ -88,23 +92,46 @@ python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-v]
   -s, --sprint   metrica: sprint weeks commit
   -v, --verbose  restituisce output verboso
 ````
-### Requires
-[comment]: <> (Pronto prova)
-* Python 3.8
-* Git
-* [PyDriller](https://github.com/ishepard/pydriller): a  Python framework that helps developers in analyzing Git repositories
-* [giturlparse](https://pypi.org/project/giturlparse/): Parse & rewrite git urls (supports GitHub, Bitbucket, FriendCode, Assembla, Gitlab …)
-#### Requirements:
-requirements.txt comprende la lista delle third party packages con i relativi version numbers
-````commandline
-pip freeze > requirements.txt
-````
+
 #### Ambiente di sviluppo
 Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 * Al fine di prevenire problemi di dependency, rendere il progetto riproducibile e auto-contenuto.
 * Per installare i dovuti packages su un host che non si hanno i permessi admin.
 * Evita l'uso della directory `side-packages/` quando si necessità l'uso di questi solo per un progetto.
 
+## Esiti Sprint week
+Plot della metrica Sprint week effettuato con [Sprint_plot.py](Sprint_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [Final result](./final-results) o [Data results](./data-results).
+Le due cartelle riportano gli esisti rispettivamente di tutto l'andamento del repository o dei singoli branch che lo caratterizzano.
+Lo script esegue una serie di report grafici tutti vincolati allo studio dello Scrum:
+* numero andamento commit negli sprint
+* andamento sprint nel corso degli anni
+* numero autori degli sprint
+* combinazione di sprint su branch diversi: feature vs test
+
+Start script
+````commandline
+python Sprint_plot.py
+Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
+````
+
+#### Esempio 1: master branch
+
+![Screenshot](fig/sprint_branch_es_1.png)
+
+#### Esempio 2: master banch
+![Screenshot](fig/sprint_branch_es_2.png)
+
+#### Esempio 3: [maven-web-application-o](https://github.com/yuvaraj3115/maven-web-application-o)
+##### Sprint
+![Screenshot](fig/maven%20esiti.png)
+##### Sprint + valori commit per settimana
+![Screenshot](fig/maven%20esiti%20+%20esiti.png)
+##### Autori
+![Screenshot](fig/maven%20autori.png)
+##### Sprint + Autori
+![Screenshot](fig/sprint%20+%20autori.png)
+##### Sprint nell'intero storico attuale del progetto
+![Screenshot](fig/sprint%20week%20+%20no%20commit%20week.png)
 
 #### TODO:
 
