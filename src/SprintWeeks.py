@@ -37,9 +37,6 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
         for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo).traverse_commits(), total_commits,
                                                  prefix='Progress:', suffix='Complete', length=50):
 
-            if commit.author.email not in author:
-                author.append(commit.author.email)
-
             logger.info(f'Hash: {commit.hash}, '
                         f'Week: {commit.committer_date.isocalendar()[1]}, '
                         f'Time: {commit.committer_date}, '
@@ -48,21 +45,30 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
             if prec_commit == None:
                 prec_commit = commit
                 week_commit = week_commit + 1
+                author.append(commit.author.email)
                 continue
 
             # conteggio commit della stessa settimana nello stesso anno
             if prec_commit.committer_date.year == commit.committer_date.year and \
                 prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
+                if commit.author.email not in author:
+                    author.append(commit.author.email)
             else:   # cambio di settimana salvo gli esiti
-                writer.writerow({csv_headers[0]: commit.committer_date,  # Time
+                writer.writerow({csv_headers[0]: prec_commit.committer_date,  # Time
                                  csv_headers[1]: week_commit,  # Commit della settimana
-                                 csv_headers[2]: commit.committer_date.isocalendar()[1], # Week
+                                 csv_headers[2]: prec_commit.committer_date.isocalendar()[1], # Week
                                  csv_headers[3]: len(author)})  # Authors
                 week_commit = 1     # reset
                 author = []
+                author.append(commit.author.email)
             prec_commit = commit
             time.sleep(0.1)
+        # last commit
+        writer.writerow({csv_headers[0]: prec_commit.committer_date,  # Time
+                         csv_headers[1]: week_commit,  # Commit della settimana
+                         csv_headers[2]: prec_commit.committer_date.isocalendar()[1],  # Week
+                         csv_headers[3]: len(author)})  # Authors
     logger.info(f'Sprint Week: {repo_name} ✔')
 
 
@@ -77,9 +83,6 @@ def log_view(repo, repo_name, csv_headers):
         prec_commit = None
         for commit in Repository(path_to_repo=repo).traverse_commits():
 
-            if commit.author.email not in author:
-                author.append(commit.author.email)
-
             logger.info(f'Hash: {commit.hash}, '
                         f'Week: {commit.committer_date.isocalendar()[1]}, '
                         f'Time: {commit.committer_date}, '
@@ -88,20 +91,29 @@ def log_view(repo, repo_name, csv_headers):
             if prec_commit == None:  # Forse senza if e prec_commit = commit standard a ogni ciclo
                 prec_commit = commit
                 week_commit = week_commit + 1
+                author.append(commit.author.email)
                 continue
 
             # conteggio dei commit: della stessa settimana nello stesso anno
             if prec_commit.committer_date.year == commit.committer_date.year and \
                     prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
+                if commit.author.email not in author:
+                    author.append(commit.author.email)
             else:  # cambio di settimana salvo gli esiti
-                writer.writerow({csv_headers[0]: commit.committer_date,  # Time
+                writer.writerow({csv_headers[0]: prec_commit.committer_date,  # Time
                                  csv_headers[1]: week_commit,  # Commit della settimana
-                                 csv_headers[2]: commit.committer_date.isocalendar()[1], # Week
+                                 csv_headers[2]: prec_commit.committer_date.isocalendar()[1], # Week
                                  csv_headers[3]: len(author)})  # Authors
                 week_commit = 1     #reset
                 author = []
+                author.append(commit.author.email)
             prec_commit = commit
+        # last commit
+        writer.writerow({csv_headers[0]: prec_commit.committer_date,  # Time
+                         csv_headers[1]: week_commit,  # Commit della settimana
+                         csv_headers[2]: prec_commit.committer_date.isocalendar()[1],  # Week
+                         csv_headers[3]: len(author)})  # Authors
     logger.info(f'Sprint Week: {repo_name} ✔')
 
 
@@ -120,9 +132,6 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
         for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo, only_in_branch=branch).traverse_commits(),
                                                  total_commits, prefix='Progress:', suffix='Complete', length=50):
 
-            if commit.author.email not in author:
-                author.append(commit.author.email)
-
             logger.info(f'Hash: {commit.hash}, '
                         f'Week: {commit.committer_date.isocalendar()[1]}, '
                         f'Time: {commit.committer_date}, '
@@ -131,21 +140,30 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
             if prec_commit == None:
                 prec_commit = commit
                 week_commit = week_commit + 1
+                author.append(commit.author.email)
                 continue
 
             # conteggio commit della stessa settimana nello stesso anno
             if prec_commit.committer_date.year == commit.committer_date.year and \
                 prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
+                if commit.author.email not in author:
+                    author.append(commit.author.email)
             else:   # cambio di settimana salvo gli esiti
-                writer.writerow({csv_branch[0]: commit.committer_date,  # Branch_name che prende il Time come valori
+                writer.writerow({csv_branch[0]: prec_commit.committer_date,  # Branch_name che prende il Time come valori
                                  csv_branch[1]: week_commit,  # Commit della settimana
-                                 csv_branch[2]: commit.committer_date.isocalendar()[1], # Week
+                                 csv_branch[2]: prec_commit.committer_date.isocalendar()[1], # Week
                                  csv_branch[3]: len(author)})  # Authors
                 week_commit = 1     # reset
                 author = []
+                author.append(commit.author.email)
             prec_commit = commit
             time.sleep(0.1)
+        # last week
+        writer.writerow({csv_branch[0]: prec_commit.committer_date,  # Branch_name che prende il Time come valori
+                         csv_branch[1]: week_commit,  # Commit della settimana
+                         csv_branch[2]: prec_commit.committer_date.isocalendar()[1],  # Week
+                         csv_branch[3]: len(author)})  # Authors
     logger.info(f'Sprint Week Branch {branch}: {repo_name} ✔')
 
 
