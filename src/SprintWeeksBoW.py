@@ -99,7 +99,6 @@ def log_view(repo, repo_name, csv_headers):
                          csv_headers[2]: msg_commit})  # Msg_data
     logger.info(f'BoW Sprint Week: {repo_name} ✔')
 
-
 def sprint_commit_bow(urls, verbose):
     """ Invoca metodo di analisi: Sprint Week Commits BoW"""
     # Setting log
@@ -124,3 +123,5 @@ def sprint_commit_bow(urls, verbose):
             log_view(url, commit.project_name, csv_headers)
         else:  # log file
             bar_view(url, commit.project_name, git.total_commits(), csv_headers)
+
+    # ML?

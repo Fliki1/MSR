@@ -63,6 +63,16 @@ requirements.txt comprende la lista delle third party packages con i relativi ve
 ````commandline
 pip freeze > requirements.txt
 ````
+Per eseguire [] si richiedono il download delle seguenti package:
+* Per nltk **stopwords**:
+````commandline
+import nltk
+nltk.download('stopwords')
+````
+* Per **spacy**:
+````commandline
+python -m spacy download en_core_web_sm
+````
 
 ## Quick usage:
 Git clone
