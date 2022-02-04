@@ -56,50 +56,53 @@ with open("testset.csv", 'w') as f:
 f.close()
 
 # ---------------
-
+data = pd.read_csv("testset.csv")
 nlp = spacy.load('en_core_web_sm')
 
 m_tool = Matcher(nlp.vocab)
 
-fix = [{'LOWER': 'fix'}]
-fix2 = [{"LOWER": {"REGEX": "^fix"}}]
 
-test = [{'LOWER': 'test'}]
-test2 = [{"LOWER": {"REGEX": "^test"}}]
+fix = [[{"LOWER": "fix"}],
+       [{"TEXT": {"REGEX": "^fix"}}]]
 
-bug = [{'LOWER': 'bug'}]
-bug2 = [{"LOWER": {"REGEX": "^bug"}}]
+test = [[{"LOWER": "test"}],
+       [{"TEXT": {"REGEX": "^test"}}]]
 
-refactoring = [{'LOWER': 'refact'}]
-refactoring2 = [{"LOWER": {"REGEX": "^refact"}}]
+bug = [[{"LOWER": "bug"}],
+       [{"TEXT": {"REGEX": "^bug"}}]]
 
-feature = [{'LOWER': 'feature'}]
-feature2 = [{"LOWER": {"REGEX": "^feature"}}]
+refactoring = [[{"LOWER": "refact"}],
+       [{"TEXT": {"REGEX": "^refact"}}]]
 
-documentation = [{'LOWER': 'documentation'}]
-documentation2 = [{"LOWER": {"REGEX": "^documentation"}}]
+feature = [[{"LOWER": "feature"}],
+       [{"TEXT": {"REGEX": "^feature"}}]]
 
-m_tool.add('FIX', None, fix, fix2)
-m_tool.add('TEST', None, test, test2)
-m_tool.add('BUG', None, bug, bug2)
-m_tool.add('REF', None, refactoring, refactoring2)
-m_tool.add('FEAT', None, feature, feature2)
-m_tool.add('DOC', None, documentation, documentation2)
+documentation = [[{"LOWER": "documentation"}],
+       [{"TEXT": {"REGEX": "^documentation"}}]]
+
+
+m_tool.add('FIX', fix, on_match=None)
+m_tool.add('TEST', test, on_match=None)
+m_tool.add('BUG', bug, on_match=None)
+m_tool.add('REF', refactoring, on_match=None)
+m_tool.add('FEAT', feature, on_match=None)
+m_tool.add('DOC', documentation, on_match=None)
 
 # Header del csv
 fieldnam = ['repo_name', 'commit_hash', 'Tag']
 
 with open("finale.csv", 'w') as f:
-    writer = csv.DictWriter(f, fieldnames=fieldnam)
+    writer = csv.DictWriter(f, fieldnames=csv_headers)
     writer.writeheader()
 f.close()
 
 for index, row in data.iterrows():
     sentence = nlp(row['Msg_data'])
+    print(sentence)
     phrase_matches = m_tool(sentence)
     for match_id, start, end in phrase_matches:
-        string_id = nlp.vocab.strings[match_id]
-        span = sentence[start:end]
+        string_id = nlp.vocab.strings[match_id] # Get string representation: 'FIX'
+        span = sentence[start:end] # The matched span
         if span.text:
             with open("finale.csv", 'a') as f:
                 writer = csv.DictWriter(f, fieldnames=csv_headers)
