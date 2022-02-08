@@ -5,27 +5,31 @@ import matplotlib.pyplot as plt
 import spacy
 import seaborn as sns
 from spacy.matcher import Matcher
-import nltk
 from nltk.stem.porter import *
 import re
 from nltk.corpus import stopwords
 from bs4 import BeautifulSoup
 
+# Download stopwords
+# import nltk
 # nltk.download('stopwords')
+
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;]')
 BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
-
-# change path all'occorrenza
-path = input("Enter CSV Repositories: ")
 # Esempio
 # path = 'final-results/awesome-docker/sprint_week_master.csv'
 # oppure path = 'data-results/sprint_week_nomerepository.csv'
+# change path all'occorrenza
+partial_path = input("Enter CSV Repositories: data-results/bow_sprint_week_")
+path = "data-results/bow_sprint_week_" + partial_path
 path_split = path.split('/')
 
 data_sprint = pd.read_csv(path)  # prendo i dati
 data_sprint = data_sprint[pd.notnull(data_sprint['Msg_data'])]  # checking not missing msg
-#print(data.head(10))
+
+
+# print(data.head(10))
 
 
 def clean_text(text):
@@ -38,7 +42,7 @@ def clean_text(text):
 
 
 data_sprint['Msg_data'] = data_sprint['Msg_data'].apply(clean_text)
-#print(data['Msg_data'][0])
+# print(data['Msg_data'][0])
 
 # ---------------
 
@@ -68,19 +72,19 @@ fix = [[{"LOWER": "fix"}],
        [{"TEXT": {"REGEX": "^fix"}}]]
 
 test = [[{"LOWER": "test"}],
-       [{"TEXT": {"REGEX": "^test"}}]]
+        [{"TEXT": {"REGEX": "^test"}}]]
 
 bug = [[{"LOWER": "bug"}],
        [{"TEXT": {"REGEX": "^bug"}}]]
 
 refactoring = [[{"LOWER": "refact"}],
-       [{"TEXT": {"REGEX": "^refact"}}]]
+               [{"TEXT": {"REGEX": "^refact"}}]]
 
 feature = [[{"LOWER": "feature"}],
-       [{"TEXT": {"REGEX": "^feature"}}]]
+           [{"TEXT": {"REGEX": "^feature"}}]]
 
 documentation = [[{"LOWER": "documentation"}],
-       [{"TEXT": {"REGEX": "^documentation"}}]]
+                 [{"TEXT": {"REGEX": "^documentation"}}]]
 
 m_tool.add('FIX', fix, on_match=None)
 m_tool.add('TEST', test, on_match=None)
@@ -101,8 +105,8 @@ for index, row in data_sprint.iterrows():
     sentence = nlp(row['Msg_data'])
     phrase_matches = m_tool(sentence)
     for match_id, start, end in phrase_matches:
-        string_id = nlp.vocab.strings[match_id] # Get string representation: 'FIX'
-        span = sentence[start:end] # The matched span
+        string_id = nlp.vocab.strings[match_id]  # Get string representation: 'FIX'
+        span = sentence[start:end]  # The matched span
         if span.text:
             with open("finale.csv", 'a') as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnam)
@@ -137,23 +141,23 @@ with open("bow_tag_filter.csv", 'w') as f:
             prec = line
             max_index = i
             continue
-        if prec == line:   # giorni uguali con tag diversi
-            #print(i, "uguali: ", prec, " - ", line)
-            if data_count_filter['#Tag'][i-1] < data_count_filter['#Tag'][i]:
+        if prec == line:  # giorni uguali con tag diversi
+            # print(i, "uguali: ", prec, " - ", line)
+            if data_count_filter['#Tag'][i - 1] < data_count_filter['#Tag'][i]:
                 prec = line
                 max_index = i
-        else:   # diversi salvo il precedente
-            #print(i, "diversi: ", prec, " - ", line, " salvo")
+        else:  # diversi salvo il precedente
+            # print(i, "diversi: ", prec, " - ", line, " salvo")
             writer.writerow({'Day': data_count_filter['Day'][max_index], 'Week': data_count_filter['Week'][max_index],
                              'Tag': data_count_filter['Tag'][max_index], '#Tag': data_count_filter['#Tag'][max_index]})
             prec = line
             max_index = i
 
-        if i == len(data_count_filter['Day'])-1:  # devo salvare l'ultimo
+        if i == len(data_count_filter['Day']) - 1:  # devo salvare l'ultimo
             # print(i, "ultimo")
-            #if data_count_filter['Day'][i] != data_count_filter['Day'][i-1]:  # se diverso dal penultimo - salvo
+            # if data_count_filter['Day'][i] != data_count_filter['Day'][i-1]:  # se diverso dal penultimo - salvo
             writer.writerow({'Day': data_count_filter['Day'][max_index], 'Week': data_count_filter['Week'][max_index],
-                         'Tag': data_count_filter['Tag'][max_index], '#Tag': data_count_filter['#Tag'][max_index]})
+                             'Tag': data_count_filter['Tag'][max_index], '#Tag': data_count_filter['#Tag'][max_index]})
 f.close()
 
 os.remove('testset.csv')
@@ -166,25 +170,28 @@ os.remove('bow_tag.csv')
 data_bow = pd.read_csv("bow_tag_filter.csv")  # prendo i dati bow
 
 # richiedo i dati del main scrum sprint
-main_path = input("Enter CSV Repositories Main to join: ")
+partial_path = input("Enter CSV Repositories Main to join: data-results/sprint_week_")
+main_path = "data-results/sprint_week_" + partial_path
 text_path_split = main_path.split('/')
-main_data = pd.read_csv(main_path) # prendo i dati del branch text
+main_data = pd.read_csv(main_path)  # prendo i dati del branch text
 
-main_datax = [x[:4] +"-"+ str(y) for x, y in zip(main_data['Day'], main_data['Week'])]     # dati nella forma anno-settimana
-datab = [x[:4] +"-" + str(y) for x, y in zip(data_bow['Day'], data_bow['Week'])]
+main_datax = [x[:4] + "-" + str(y) for x, y in
+              zip(main_data['Day'], main_data['Week'])]  # dati nella forma anno-settimana
+datab = [x[:4] + "-" + str(y) for x, y in zip(data_bow['Day'], data_bow['Week'])]
 
-sns.set()   # corrisponde al plt.grid(True)
+sns.set()  # corrisponde al plt.grid(True)
 
 plt.figure(1)
 barlist = plt.bar(main_datax, main_data['Sprint_week'])
 for indice, valore in enumerate(main_datax):
-    if valore in datab:
-        print("dentro ",data_bow[datab.index(valore)])
-        if data_bow[datab.index(valore)] in ['FIX', 'TEST', 'BUG', 'REF', 'DOC']:
+    if valore in datab:  # trovata settimana analizzata sotto BoW
+        if data_bow["Tag"][datab.index(valore)] in ['FIX', 'TEST', 'BUG', 'REF', 'DOC']:
             barlist[indice].set_color('g')
-plt.xticks(main_datax, main_datax, rotation=25)     # x
-plt.xlabel('Weekly commits')        # x
-plt.ylabel('Number of changes')     # y
+plt.xticks(main_datax, main_datax, rotation=25)  # x
+plt.xlabel('Weekly commits')  # x
+plt.ylabel('Number of changes')  # y
 plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
 plt.title('Sprint Weekly trend BoW', fontsize=15)
 plt.show()
+
+os.remove('bow_tag_filter.csv')
