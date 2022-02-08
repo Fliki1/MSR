@@ -37,7 +37,7 @@ The lines of code metric shows the number of lines for every week.
 This indicator is very useful to study the evolution of the project as it highlights the
 development phases and helps defining the adopted methodology, from the beginning to the end of project.
 
-### 6. Sprint week commit trend:
+### 6. Sprint week commit trend (Scrum):
 Metrica per individuare la possibile presenza di un 
 approccio Agile: Scrum Sprint, che il team di sviluppo 
 software ha adottato sul singolo repository.
@@ -46,11 +46,22 @@ settimane impiegate allo sviluppo +1 dedicata al Testing.
 La ricerca viene effettuata sia sullo storico del repository in totale
 che sui singoli branch che lo costituiscono.
 La metrica si basa sulla ricerca e report di questa finestra temporale
-con relative conclusioni.
+con relative conclusioni. [Sprint_plot.py](Sprint_plot.py) ne grafica i risultati.
 
 _I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
-_Nota: la metrica Sprint non conteggia e non riporta le settimane senza commit._
+[comment]: <> (_Nota: la metrica Sprint non conteggia e non riporta le settimane senza commit._)
+
+### 7. Bag-of-Words Sprint week commit message:
+Metrica per individuare la possibile presenza di un 
+approccio Agile: Scrum Sprint.
+La metrica si basa sulla ricerca della finestra temporale di ciascun Sprint
+studiando il contenuto dei messaggi dei commit settimanali. Con l'ausilio 
+della tecnica di BoW si determinano la presenza di parole chiavi quali: FIX-BUG-DOC-REF-TEST
+per distinguere i commit effettuati durante la fase di Testing dalla fase di sviluppo del repository.
+[Sprint_BoW_plot.py](Sprint_BoW_plot.py) ne grafica i risultati.
+
+_I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
 ### Requires
 [comment]: <> (Pronto prova)
@@ -63,7 +74,7 @@ requirements.txt comprende la lista delle third party packages con i relativi ve
 ````commandline
 pip freeze > requirements.txt
 ````
-Per eseguire [] si richiedono il download delle seguenti package:
+Per eseguire [Sprint_Bow_plot.py](Sprint_BoW_plot.py) si richiedono il download dei seguenti package:
 * Per nltk **stopwords**:
 ````commandline
 import nltk
@@ -90,16 +101,17 @@ pip install -r requirements.txt
 ````
 Start script
 ````commandline
-python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-v]
+python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-s] [-b] [-v]
 ````
 ````commandline
   -h, --help     show this help message and exit
   -w, --week     metrica: week commit
   -hrs, --hour   metrica: hour commit
   -avg AVERAGE, --average AVERAGE   metrica: average commit distribution
-  -yr YEAR, --year YEAR             metrica: last year week commit
+  -yr YEAR, --year YEAR   metrica: last year week commit
   -l, --line     metrica: line trend commit
   -s, --sprint   metrica: sprint weeks commit
+  -b, --sprintbow   metrica: sprint weeks commit BoW
   -v, --verbose  restituisce output verboso
 ````
 
@@ -109,12 +121,12 @@ Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 * Per installare i dovuti packages su un host che non si hanno i permessi admin.
 * Evita l'uso della directory `side-packages/` quando si necessità l'uso di questi solo per un progetto.
 
-## Esiti Sprint week
+## Esiti 6. Sprint week
 Plot della metrica Sprint week effettuato con [Sprint_plot.py](Sprint_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [Final result](./final-results) o [Data results](./data-results).
 Le due cartelle riportano gli esisti rispettivamente di tutto l'andamento del repository o dei singoli branch che lo caratterizzano.
 Lo script esegue una serie di report grafici tutti vincolati allo studio dello Scrum:
 * numero andamento commit negli sprint
-* andamento sprint nel corso degli anni
+* andamento sprint nel corso degli anni per intero (conteggio settimane senza sprint)
 * numero autori degli sprint
 * combinazione di sprint su branch diversi: feature vs test
 
@@ -144,6 +156,17 @@ Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
 ![Screenshot](fig/sprint%20week%20+%20no%20commit%20week.png)
 ##### Main branch + sotto branch (es: testing)
 ![Screenshot](fig/main_branch_join_branch.png)
+
+## Esiti 7. Bow Sprint week
+Plot della metrica BoW Sprint week effettuato con [Sprint_BoW_plot.py](Sprint_BoW_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [Data results](./data-results).
+Per il plot del BoW Sprint week è richiesta anche l'esecuzione della 6. Sprint week.
+La cartella data-results conterrà in questo modo gli esisti di entrambe le metriche.
+Lo script esegue tutto il processo di BoW consistente nella rimozione 
+delle **stopwords** dal testo dei messaggi, nella conversione a un dominio comune delle parole dei messaggi
+con l'operazione di **stemming** e in fine una ricerca per **matching** delle parole a noi interessate:
+FIX-BUG-TEST-REF-DOC.
+In base all'occorrenza di questi nei messaggi dei commit dell'arco della settimana associano un tag alla Sprint
+di appartenenza.
 
 #### TODO:
 
