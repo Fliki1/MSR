@@ -44,7 +44,7 @@ software ha adottato sul singolo repository.
 Ciascuna delle Sprint sono costituite essenzialmente da 3 
 settimane impiegate allo sviluppo +1 dedicata al Testing.
 La ricerca viene effettuata sia sullo storico del repository in totale
-che sui singoli branch che lo costituiscono.
+che sui singoli remote branch che lo costituiscono.
 La metrica si basa sulla ricerca e report di questa finestra temporale
 con relative conclusioni. [Sprint_plot.py](Sprint_plot.py) ne grafica i risultati.
 
@@ -123,7 +123,7 @@ Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 
 ## Esiti 6. Sprint week
 Plot della metrica Sprint week effettuato con [Sprint_plot.py](Sprint_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [Final result](./final-results) o [Data results](./data-results).
-Le due cartelle riportano gli esisti rispettivamente di tutto l'andamento del repository o dei singoli branch che lo caratterizzano.
+Le due cartelle riportano gli esisti rispettivamente di tutto l'andamento del repository o dei singoli remote branch che lo caratterizzano.
 Lo script esegue una serie di report grafici tutti vincolati allo studio dello Scrum:
 * numero andamento commit negli sprint
 * andamento sprint nel corso degli anni per intero (conteggio settimane senza sprint)

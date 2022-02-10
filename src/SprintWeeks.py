@@ -50,14 +50,14 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
 
             # conteggio commit della stessa settimana nello stesso anno
             if prec_commit.committer_date.year == commit.committer_date.year and \
-                prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
+                    prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
                 if commit.author.email not in author:
                     author.append(commit.author.email)
             else:   # cambio di settimana salvo gli esiti
                 writer.writerow({csv_headers[0]: prec_commit.committer_date,  # Time
                                  csv_headers[1]: week_commit,  # Commit della settimana
-                                 csv_headers[2]: prec_commit.committer_date.isocalendar()[1], # Week
+                                 csv_headers[2]: prec_commit.committer_date.isocalendar()[1],  # Week
                                  csv_headers[3]: len(author)})  # Authors
                 week_commit = 1     # reset
                 author = []
@@ -103,9 +103,9 @@ def log_view(repo, repo_name, csv_headers):
             else:  # cambio di settimana salvo gli esiti
                 writer.writerow({csv_headers[0]: prec_commit.committer_date,  # Time
                                  csv_headers[1]: week_commit,  # Commit della settimana
-                                 csv_headers[2]: prec_commit.committer_date.isocalendar()[1], # Week
+                                 csv_headers[2]: prec_commit.committer_date.isocalendar()[1],  # Week
                                  csv_headers[3]: len(author)})  # Authors
-                week_commit = 1     #reset
+                week_commit = 1     # reset
                 author = []
                 author.append(commit.author.email)
             prec_commit = commit
@@ -129,8 +129,9 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
         writer.writeheader()
         week_commit = 0
         prec_commit = None
-        for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo, only_in_branch=branch).traverse_commits(),
-                                                 total_commits, prefix='Progress:', suffix='Complete', length=50):
+        for commit in ProgressionBar.progressBar(
+                Repository(path_to_repo=repo, only_in_branch=branch).traverse_commits(),
+                total_commits, prefix='Progress:', suffix='Complete', length=50):
 
             logger.info(f'Hash: {commit.hash}, '
                         f'Week: {commit.committer_date.isocalendar()[1]}, '
@@ -145,14 +146,14 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
 
             # conteggio commit della stessa settimana nello stesso anno
             if prec_commit.committer_date.year == commit.committer_date.year and \
-                prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
+                    prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
                 if commit.author.email not in author:
                     author.append(commit.author.email)
             else:   # cambio di settimana salvo gli esiti
-                writer.writerow({csv_branch[0]: prec_commit.committer_date,  # Branch_name che prende il Time come valori
+                writer.writerow({csv_branch[0]: prec_commit.committer_date,  #  Branch_name che prende il Time come valori
                                  csv_branch[1]: week_commit,  # Commit della settimana
-                                 csv_branch[2]: prec_commit.committer_date.isocalendar()[1], # Week
+                                 csv_branch[2]: prec_commit.committer_date.isocalendar()[1],  # Week
                                  csv_branch[3]: len(author)})  # Authors
                 week_commit = 1     # reset
                 author = []
@@ -199,9 +200,19 @@ def sprint_commit(urls, verbose):
         r = Repo(commit.project_path)
         remote_refs = r.remote().refs
 
+        index = 1
+        # scan remote branches
         for refs in remote_refs:
-            print(f'(sprint_week_commit) Project: {commit.project_name} Branch: {refs.name}')
-            branch_view(url, refs.name, commit.project_name, git.total_commits(), csv_headers)
+            branch_name = refs.name.split('/')
+            if branch_name[len(branch_name) - 1] == 'HEAD':  # evito l'analisi del branch HEAD, solitamente punta master
+                continue
+            print(f'(sprint_week_branch_commit) Project: {commit.project_name} Branch: {refs.name} '
+                  f'#: {index}/{len(remote_refs)-1}')
+            len_branch = len(list(Repository(path_to_repo=url, only_in_branch=refs.name).traverse_commits()))
+            branch_view(url, refs.name, commit.project_name, len_branch, csv_headers)
+            index += 1
+
+        # next repo
         repo_index += 1
 
 # TODO: calcolare la media! dagli esiti stessi?
