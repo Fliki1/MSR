@@ -28,7 +28,7 @@ def log(verbos):
 def bar_view(repo, repo_name, total_commits, csv_headers):
     """ Sprint Weeks: bar console, non buono per benchmark visto il 0.1s di delay """
     author = []
-    with open("./main_data-results/sprint_week_" + repo_name + ".csv", 'w') as f:
+    with open("./data-results/sprint_week_" + repo_name + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_headers)
         writer.writeheader()
@@ -75,7 +75,7 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
 def log_view(repo, repo_name, csv_headers):
     """ Sprint Weeks: log console """
     author = []
-    with open("./main_data-results/sprint_week_" + repo_name + ".csv", 'w') as f:
+    with open("./data-results/sprint_week_" + repo_name + ".csv", 'w') as f:
         # Header del csv
         writer = csv.DictWriter(f, fieldnames=csv_headers)
         writer.writeheader()
