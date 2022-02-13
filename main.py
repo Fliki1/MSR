@@ -5,7 +5,7 @@ from giturlparse import parse
 
 # TODO: continuare a seguire la doc di PyDriller ufficiale
 
-from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit, LineCodeCommit, SprintWeeks_2, SprintWeeksBoW
+from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit, LineCodeCommit, SprintWeeks, SprintWeeksBoW
 
 # create logger
 logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         AverageCommit.average_commit(urls, None, verb)
         LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
         LineCodeCommit.linecode_commit(urls, verb)
-        SprintWeeks_2.sprint_commit(urls, verb)
+        SprintWeeks.sprint_commit(urls, verb)
         SprintWeeksBoW.sprint_commit_bow(urls, verb)
     else:
         if week:
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         if line:
             LineCodeCommit.linecode_commit(urls, verb)
         if sprint:
-            SprintWeeks_2.sprint_commit(urls, verb)
+            SprintWeeks.sprint_commit(urls, verb)
         if sprintbow:
             SprintWeeksBoW.sprint_commit_bow(urls, verb)
 
