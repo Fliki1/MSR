@@ -79,9 +79,13 @@ for msg in data_sprint['Msg_data']:
 
 occurrences = Counter(msg_occurrences)
 
+
 text_box = '#Top BoW Frequency'
-for most_word in occurrences.most_common(10):
-    text_box += '\n' + most_word[0] + ': ' + str(most_word[1])
+conteggio = 0
+for most_word in occurrences.most_common(20):
+    if not most_word[0].isdigit() and conteggio < 11:
+        text_box += '\n' + most_word[0] + ': ' + str(most_word[1])
+        conteggio += 1
 #print(text_box)
 
 # ---------------
@@ -204,23 +208,29 @@ datab = [x[:4] + "-" + str(y) for x, y in zip(data_bow['Day'], data_bow['Week'])
 sns.set()  # corrisponde al plt.grid(True)
 
 plt.figure(1)
-barlist = plt.bar(main_datax, main_data['Sprint_week'])
+barlist = plt.bar(main_datax, main_data['Sprint_week'], label='Development')
+test_label = True
 for indice, valore in enumerate(main_datax):
     if valore in datab:  # trovata settimana analizzata sotto BoW
         if data_bow["Tag"][datab.index(valore)] in ['FIX', 'TEST', 'BUG', 'REF', 'DOC']:
+            if test_label:
+                barlist[indice].set_label('FIX-TEST-BUG-REF-DOC')
+                test_label = False
             barlist[indice].set_color('g')
-plt.xticks(main_datax, main_datax, rotation=25)  # x
+
+plt.legend()
+plt.xticks(main_datax, main_datax, rotation=30)  # x
 plt.xlabel('Weekly commits')  # x
 plt.ylabel('Number of changes')  # y
 plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
 plt.title('Sprint Weekly trend BoW', fontsize=15)
 
 # these are matplotlib.patch.Patch properties
-props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+props = dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.5, edgecolor='black')
 
 # plt.annotate('Something', xy=(0.05, 0.95), xycoords='axes fraction', bbox=props)
 
-plt.annotate(text_box, xy=(0, 1), xytext=(12, -12), va='top',
+plt.annotate(text_box, xy=(0, 1), xytext=(12, -12), va='top', annotation_clip=False,
              xycoords='axes fraction', textcoords='offset points', bbox=props)
 
 plt.show()
