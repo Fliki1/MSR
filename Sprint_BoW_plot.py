@@ -1,5 +1,6 @@
 import pandas as pd
 import csv
+from collections import Counter
 import os
 import matplotlib.pyplot as plt
 import spacy
@@ -29,8 +30,7 @@ data_sprint = pd.read_csv(path)  # prendo i dati
 data_sprint = data_sprint[pd.notnull(data_sprint['Msg_data'])]  # checking not missing msg
 
 
-# print(data.head(10))
-
+#print(data_sprint.head(10))
 
 def clean_text(text):
     text = BeautifulSoup(text, "lxml").text  # HTML decoding
@@ -40,30 +40,52 @@ def clean_text(text):
     text = ' '.join(parola for parola in text.split() if parola not in STOPWORDS)  # delete stopwords from text
     return text
 
-
+#print(data_sprint['Msg_data'][4])
 data_sprint['Msg_data'] = data_sprint['Msg_data'].apply(clean_text)
-# print(data['Msg_data'][0])
+#print(data_sprint['Msg_data'][4])
 
-# ---------------
 
-# stemming e salvataggio su file
+# ==============
+
+# STEMMING
 stemmer = PorterStemmer()
 
 # csv header
 csv_headers = ["Day", "Week", "Msg_data"]
 
-with open("testset.csv", 'w') as f:
+# Salvataggio su file: stemmingbowset.csv
+with open("stemmingbowset.csv", 'w') as f:
     writer = csv.DictWriter(f, fieldnames=csv_headers)
     writer.writeheader()
     for i, line in enumerate(data_sprint['Msg_data']):
         word_str = ""
         for word in line.split():
             word_str += stemmer.stem(word) + " "
+        #print(i, word_str)
         writer.writerow({'Day': data_sprint['Day'][i], 'Week': data_sprint['Week'][i], 'Msg_data': word_str})
 f.close()
 
+# ==============
+
+# Most common word
+data_sprint = pd.read_csv("stemmingbowset.csv")
+
+msg_occurrences = []
+
+for msg in data_sprint['Msg_data']:
+    for word in msg.split():
+        msg_occurrences.append(word)
+# print(msg_occurrences)
+
+occurrences = Counter(msg_occurrences)
+
+text_box = '#Top BoW Frequency'
+for most_word in occurrences.most_common(10):
+    text_box += '\n' + most_word[0] + ': ' + str(most_word[1])
+#print(text_box)
+
 # ---------------
-data_sprint = pd.read_csv("testset.csv")
+data_sprint = pd.read_csv("stemmingbowset.csv")
 nlp = spacy.load('en_core_web_sm')
 
 m_tool = Matcher(nlp.vocab)
@@ -160,7 +182,7 @@ with open("bow_tag_filter.csv", 'w') as f:
                              'Tag': data_count_filter['Tag'][max_index], '#Tag': data_count_filter['#Tag'][max_index]})
 f.close()
 
-os.remove('testset.csv')
+os.remove('stemmingbowset.csv')
 os.remove('finale.csv')
 os.remove('bow_tag.csv')
 
@@ -192,6 +214,15 @@ plt.xlabel('Weekly commits')  # x
 plt.ylabel('Number of changes')  # y
 plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
 plt.title('Sprint Weekly trend BoW', fontsize=15)
+
+# these are matplotlib.patch.Patch properties
+props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+
+# plt.annotate('Something', xy=(0.05, 0.95), xycoords='axes fraction', bbox=props)
+
+plt.annotate(text_box, xy=(0, 1), xytext=(12, -12), va='top',
+             xycoords='axes fraction', textcoords='offset points', bbox=props)
+
 plt.show()
 
 os.remove('bow_tag_filter.csv')
