@@ -8,6 +8,7 @@ import seaborn as sns
 from spacy.matcher import Matcher
 from nltk.stem.porter import *
 import re
+from nltk import ngrams
 from nltk.corpus import stopwords
 from bs4 import BeautifulSoup
 
@@ -79,7 +80,7 @@ for msg in data_sprint['Msg_data']:
 
 occurrences = Counter(msg_occurrences)
 
-
+# Top 10 BoW Frequency:
 text_box = '#Top BoW Frequency'
 conteggio = 0
 for most_word in occurrences.most_common(20):
@@ -88,7 +89,26 @@ for most_word in occurrences.most_common(20):
         conteggio += 1
 #print(text_box)
 
-# ---------------
+# Top n-grams token:
+tokenstr = ''
+for token in msg_occurrences:
+    if not token.isdigit():
+        tokenstr += token + ' '
+most_coulpe_token = Counter(list(ngrams(tokenstr.split(), 2)))
+
+# Top 10 n-grams token:
+text_box_pair = '#Top BoW Pair Token'
+conteggio = 0
+for most_word in most_coulpe_token.most_common(10):
+    """    if ', ' in commits_main_year_week:
+        commits_main_year_week.remove(', ')
+    commits_main_year_week.remove('[')
+    commits_main_year_week.remove(']')"""
+    text_box_pair += '\n' + str(most_word[0]) + ': ' + str(most_word[1])
+    conteggio += 1
+# print(text_box_pair)
+
+# ================
 data_sprint = pd.read_csv("stemmingbowset.csv")
 nlp = spacy.load('en_core_web_sm')
 
@@ -232,7 +252,10 @@ props = dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.5, edgecolor='
 
 plt.annotate(text_box, xy=(0, 1), xytext=(12, -12), va='top', annotation_clip=False,
              xycoords='axes fraction', textcoords='offset points', bbox=props)
-
+# (-0.15, 1) (-0.17, 1) (0, 1)
+plt.annotate(text_box_pair, xy=(0.13, 1), xytext=(12, -12), va='top', annotation_clip=False,
+             xycoords='axes fraction', textcoords='offset points', bbox=props)
+# (-0.21, 0.33) (-0.21, 0.33) (0.13, 1)
 plt.show()
 
 os.remove('bow_tag_filter.csv')
