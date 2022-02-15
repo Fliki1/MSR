@@ -2,7 +2,7 @@ import csv
 import time
 import logging
 from datetime import datetime
-
+import sys
 from src import ProgressionBar
 from pydriller import Repository
 from pydriller import Git
@@ -31,7 +31,7 @@ def bar_view(repo, repo_index, since, to, year_matrix):
     # Nel caso in cui non sono presenti commit in quell'anno
     if sum(1 for x in Repository(path_to_repo=repo, since= since, to= to).traverse_commits()) < 1:
         logger.info(f'Non sono presenti commit in quell\'anno')
-        return []
+        sys.exit('Non sono presenti commit in quell\'anno')
 
     for commit in ProgressionBar.progressBar(Repository(path_to_repo=repo, since= since, to= to).traverse_commits(),
                                              sum(1 for x in Repository(path_to_repo=repo, since= since, to= to).traverse_commits()),
@@ -48,7 +48,7 @@ def log_view(repo, repo_index, since, to, year_matrix):
     total_commits = sum(1 for x in Repository(path_to_repo=repo, since= since, to= to).traverse_commits())
     if total_commits < 1:
         logger.info(f'Non sono presenti commit in quell\'anno')
-        return []
+        sys.exit('Non sono presenti commit in quell\'anno')
 
     commit_count = 1
     for commit in Repository(path_to_repo=repo, since= since, to=to).traverse_commits():

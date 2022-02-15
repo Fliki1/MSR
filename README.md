@@ -28,9 +28,13 @@ By excluding 10% of samples from both extremities, the mean is calculated on the
 of samples which is more accurate. Starting from this average value we consider all
 the commits that have an activity score included between -25% and +25% of the previusly average value.
 
+It's possible to specify: `None` to apply the metric to all kind of file or `.py .java .md etc`
+
 ### 4. Activity per week since the beginning of the current year:
 In this case we retrieve the week trend commit data for the current year or the last year of the project.
-Activity trend on the 52 weeks of a year.
+Activity trend on the 52 weeks of a year. You can choose to analize the last year of the last commit made `False`
+or the current nowaday year `True`.
+
 
 ### 5. Lines of code per week:
 The lines of code metric shows the number of lines for every week. 
@@ -107,7 +111,7 @@ python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-s] [-b] [
   -h, --help     show this help message and exit
   -w, --week     metrica: week commit
   -hrs, --hour   metrica: hour commit
-  -avg AVERAGE, --average AVERAGE   metrica: average commit distribution
+  -avg AVERAGE, --average <AVERAGE>   metrica: average commit distribution: None | .py | .md etc
   -yr YEAR, --year YEAR   metrica: last year week commit
   -l, --line     metrica: line trend commit
   -s, --sprint   metrica: sprint weeks commit

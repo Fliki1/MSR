@@ -1,7 +1,7 @@
 import csv
 import time
 import logging
-
+import sys
 from src import ProgressionBar
 from pydriller import Repository
 from pydriller import Git
@@ -30,6 +30,15 @@ def log(verbos):
 def bar_view(repo, repo_name, total_commits, average_file_type, csv_headers):
     """ Average commit: bar console, non buono per benchmark visto il 0.1s di delay
         e anche il conteggio del calcolo: sum(1 for x in generator) oppure len(list(generator))"""
+
+    # Check average_file_type from single -avg choise
+    if average_file_type == 'None':
+        average_file_type = None
+
+    if sum(1 for x in Repository(path_to_repo=repo,
+                                 only_modifications_with_file_types=[average_file_type]).traverse_commits()) == 0:
+        sys.exit('Non sono presenti file del formato: ' + average_file_type)
+
     # average_file_type
     if average_file_type is not None:
         with open("./data-results/average_commit_" + repo_name + ".csv", 'w') as f:
@@ -73,6 +82,14 @@ def bar_view(repo, repo_name, total_commits, average_file_type, csv_headers):
 
 def log_view(repo, repo_name, total_commits, average_file_type, csv_headers):
     """ Average commit: log console """
+    # Check average_file_type from single -avg choise
+    if average_file_type == 'None':
+        average_file_type = None
+
+    if sum(1 for x in Repository(path_to_repo=repo,
+                                 only_modifications_with_file_types=[average_file_type]).traverse_commits()) == 0:
+        sys.exit('Non sono presenti file del formato: ' + average_file_type)
+
     if average_file_type is not None:
         with open("./data-results/average_commit_" + repo_name + ".csv", 'w') as f:
             # Header del csv

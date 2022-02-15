@@ -123,6 +123,9 @@ test = [[{"LOWER": "test"}],
 bug = [[{"LOWER": "bug"}],
        [{"TEXT": {"REGEX": "^bug"}}]]
 
+debug = [[{"LOWER": "debug"}],
+       [{"TEXT": {"REGEX": "^debug"}}]]
+
 refactoring = [[{"LOWER": "refact"}],
                [{"TEXT": {"REGEX": "^refact"}}]]
 
@@ -135,6 +138,7 @@ documentation = [[{"LOWER": "documentation"}],
 m_tool.add('FIX', fix, on_match=None)
 m_tool.add('TEST', test, on_match=None)
 m_tool.add('BUG', bug, on_match=None)
+m_tool.add('DEBUG', debug, on_match=None)
 m_tool.add('REF', refactoring, on_match=None)
 m_tool.add('FEAT', feature, on_match=None)
 m_tool.add('DOC', documentation, on_match=None)
@@ -232,9 +236,9 @@ barlist = plt.bar(main_datax, main_data['Sprint_week'], label='Development')
 test_label = True
 for indice, valore in enumerate(main_datax):
     if valore in datab:  # trovata settimana analizzata sotto BoW
-        if data_bow["Tag"][datab.index(valore)] in ['FIX', 'TEST', 'BUG', 'REF', 'DOC']:
+        if data_bow["Tag"][datab.index(valore)] in ['FIX', 'TEST', 'BUG', 'DEBUG', 'REF', 'DOC']:
             if test_label:
-                barlist[indice].set_label('FIX-TEST-BUG-REF-DOC')
+                barlist[indice].set_label('FIX-TEST-BUG-DEBUG-REF-DOC')
                 test_label = False
             barlist[indice].set_color('g')
 

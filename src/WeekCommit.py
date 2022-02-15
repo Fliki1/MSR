@@ -100,7 +100,8 @@ def week_commit(urls, verbose):
     log(verbose)
 
     # Tag per i file csv
-    headers = ["Nome repo.", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+    # headers = ["Nome repo.", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+    headers = ["Repo name", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     # Matrice: riga il progetto, colonna count del giorno corrispettivo
     week_matrix = np.zeros(((len(urls)), 7), dtype=int)
