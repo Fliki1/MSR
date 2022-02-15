@@ -160,11 +160,11 @@ matrix_to_list = np.zeros(len(folder)+1, dtype=int)
 
 for i, riga in enumerate(matrix_sprint):
     matrix_to_list[i] = sum(riga)
-print(matrix_to_list)
+# print(matrix_to_list)
 
 
 df_rel = df[df.columns[0:]].div(matrix_to_list, 0) * 100
-print(df_rel)
+# print(df_rel)
 
 # text sui bar che non funziona
 """for n in df_rel:
