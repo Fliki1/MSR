@@ -231,18 +231,26 @@ datab = [x[:4] + "-" + str(y) for x, y in zip(data_bow['Day'], data_bow['Week'])
 
 sns.set()  # corrisponde al plt.grid(True)
 
-plt.figure(1)
-barlist = plt.bar(main_datax, main_data['Sprint_week'], label='Development')
-test_label = True
-for indice, valore in enumerate(main_datax):
+development_y = []
+test_fix_y = []
+# Determino i label da plottare
+for indice, valore in enumerate(main_datax):    # year-week
     if valore in datab:  # trovata settimana analizzata sotto BoW
         if data_bow["Tag"][datab.index(valore)] in ['FIX', 'TEST', 'BUG', 'DEBUG', 'REF', 'DOC']:
-            if test_label:
-                barlist[indice].set_label('FIX-TEST-BUG-DEBUG-REF-DOC')
-                test_label = False
-            barlist[indice].set_color('g')
+            test_fix_y.append(main_data['Sprint_week'][indice])
+            development_y.append(0)
+        else:
+            test_fix_y.append(0)
+            development_y.append(main_data['Sprint_week'][indice])
+    else:
+        test_fix_y.append(0)
+        development_y.append(main_data['Sprint_week'][indice])
 
-plt.legend()
+
+plt.figure(1)
+barlist_development = plt.bar(main_datax, development_y, label='Development')
+barlist_test_fix = plt.bar(main_datax, test_fix_y, color='g', label='FIX-TEST-BUG-DEBUG-REF-DOC')
+plt.legend(loc='upper right')
 plt.xticks(main_datax, main_datax, rotation=30)  # x
 plt.xlabel('Weekly commits')  # x
 plt.ylabel('Number of changes')  # y
@@ -251,8 +259,6 @@ plt.title('Sprint Weekly trend BoW', fontsize=15)
 
 # these are matplotlib.patch.Patch properties
 props = dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.5, edgecolor='black')
-
-# plt.annotate('Something', xy=(0.05, 0.95), xycoords='axes fraction', bbox=props)
 
 plt.annotate(text_box, xy=(0, 1), xytext=(12, -12), va='top', annotation_clip=False,
              xycoords='axes fraction', textcoords='offset points', bbox=props)

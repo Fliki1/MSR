@@ -173,7 +173,7 @@ df_rel = df[df.columns[0:]].div(matrix_to_list, 0) * 100
         plt.text(cs - ab / 2, i, str(np.round(pc, 1)) + '%',
                  va='center', ha='center')"""
 
-plt.legend(bbox_to_anchor=(1.04,0.5), loc="center left", borderaxespad=0)
+plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.show()
 
 """

@@ -35,6 +35,8 @@ In this case we retrieve the week trend commit data for the current year or the 
 Activity trend on the 52 weeks of a year. You can choose to analize the last year of the last commit made `False`
 or the current nowaday year `True`.
 
+### X. _MISSING_ ChangeWeek_trend
+Manca la metrica che riporta lo storico del progetto rappresentato nell'arco delle 52 settimane di un anno.
 
 ### 5. Lines of code per week:
 The lines of code metric shows the number of lines for every week. 
@@ -141,7 +143,6 @@ Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
 ````
 
 #### Esempio 1: master branch
-
 ![Screenshot](fig/sprint_branch_es_1.png)
 
 #### Esempio 2: master banch
@@ -162,15 +163,19 @@ Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
 ![Screenshot](fig/main_branch_join_branch.png)
 
 ## Esiti 7. Bow Sprint week
-Plot della metrica BoW Sprint week effettuato con [Sprint_BoW_plot.py](Sprint_BoW_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [Data results](./data-results).
+Plot della metrica BoW Sprint week effettuato con [Sprint_BoW_plot.py](Sprint_BoW_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [data results](./data-results).
 Per il plot del BoW Sprint week è richiesta anche l'esecuzione della 6. Sprint week.
 La cartella data-results conterrà in questo modo gli esisti di entrambe le metriche.
+
 Lo script esegue tutto il processo di BoW consistente nella rimozione 
 delle **stopwords** dal testo dei messaggi, nella conversione a un dominio comune delle parole dei messaggi
 con l'operazione di **stemming** e in fine una ricerca per **matching** delle parole a noi interessate:
-FIX-BUG-TEST-REF-DOC.
+FIX-BUG-DEBUG-TEST-REF-DOC.
 In base all'occorrenza di questi nei messaggi dei commit dell'arco della settimana associano un tag alla Sprint
 di appartenenza.
+
+#### Esempio 1: master branch
+![Screenshot](fig/sprint_branch_es_1.png)
 
 #### TODO:
 
@@ -183,3 +188,4 @@ E poi installare i requirements:
 ````commandline
 pip install -r requirements.txt
 ````
+2. Ricreare la metrica mancante? (X.)
