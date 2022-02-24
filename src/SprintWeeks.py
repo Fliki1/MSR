@@ -151,6 +151,7 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
                     prec_commit.committer_date.isocalendar()[1] == commit.committer_date.isocalendar()[1]:
                 week_commit = week_commit + 1
                 hash_commit_week.append(commit.hash)
+
                 if commit.author.email not in author:
                     author.append(commit.author.email)
             else:   # cambio di settimana salvo gli esiti
@@ -158,7 +159,7 @@ def branch_view(repo, branch, repo_name, total_commits, csv_branch):
                                  csv_branch[1]: week_commit,  # Commit della settimana
                                  csv_branch[2]: prec_commit.committer_date.isocalendar()[1],  # Week
                                  csv_branch[3]: len(author),
-                                 csv_branch[4]: hash_commit_week})  # Authors
+                                 csv_branch[4]: hash_commit_week})  # Commits
                 week_commit = 1     # reset
                 author = []
                 hash_commit_week = []
@@ -182,7 +183,9 @@ def sprint_commit(urls, verbose):
     log(verbose)
 
     # csv header
-    csv_headers = ["Day", "Sprint_week", "Week", "Authors", "Commits"]
+    csv_headers = ["Day", "Sprint_week", "Week", "Authors"]
+    # csv header branches
+    csv_headers_branches = ["Day", "Sprint_week", "Week", "Authors", "Commits"]
 
     # Indice del repo corrente sotto analisi
     repo_index = 0
@@ -217,7 +220,7 @@ def sprint_commit(urls, verbose):
             print(f'(sprint_week_branch_commit) Project: {commit.project_name} Branch: {refs.name} '
                   f'#: {index}/{len(remote_refs)-1}')
             len_branch = len(list(Repository(path_to_repo=url, only_in_branch=refs.name).traverse_commits()))
-            branch_view(url, refs.name, commit.project_name, len_branch, csv_headers)
+            branch_view(url, refs.name, commit.project_name, len_branch, csv_headers_branches)
             index += 1
 
         # next repo
