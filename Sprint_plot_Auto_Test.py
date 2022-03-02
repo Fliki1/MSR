@@ -1,5 +1,7 @@
 import math
 import itertools
+
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import statistics
@@ -17,23 +19,11 @@ path_split = path.split('/')
 data = pd.read_csv(path)  # prendo i dati
 sns.set()  # corrisponde al plt.grid(True)
 
-# datax = [x[:4] + "-" + str(y) for x, y in zip(data['Day'], data['Week'])]  # dati nella forma anno-settimana
-
-"""# Sprint week
-plt.figure(1)
-plt.bar(datax, data['Sprint_week'])
-plt.xticks(datax, datax, rotation=25)  # x
-plt.xlabel('Weekly commits')  # x
-plt.ylabel('Number of changes')  # y
-plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
-plt.title('Sprint Weekly trend [not average]', fontsize=15)
-plt.show()"""
 
 year_week_x = [x[:4] + "-" + str(y) for x, y in zip(data['Day'], data['Week'])]  # dati nella forma anno-settimana
 
-valid_sprint = []
-
 # Ricerca di Sprint validi 3+1
+valid_sprint = []
 if len(year_week_x) >= SLIDING_WINDOW and len(
         year_week_x) - SLIDING_WINDOW + 1 > 0:  # controllo dimensione dati vs SLIDING_WINDOW
     """print(SLIDING_WINDOW)
@@ -51,12 +41,12 @@ if len(year_week_x) >= SLIDING_WINDOW and len(
 else:
     print("Impossibile ottenere gli sprint: SLIDING_WINDOW > dei dati da analizzare")
 
-# print(valid_sprint)
+# valid_sprint: Scrum i cuoi sprint soddisfano la soglia: media(1°,2°,3°)>4°
 
 # Check valid sprint to legit sprint: sprint consecutivi settimanali
-not_consecutive_sprint=[]
+not_consecutive_sprint = []
 for entry in valid_sprint:
-    print(entry)
+    #print(entry)
     year = 0
     day = 0
     for sprint in entry:
@@ -66,42 +56,79 @@ for entry in valid_sprint:
             day = int(sprint[4:].replace('-', ''))
         else:
             # giorno successivo:
-            # stesso anno e settimana successiva o anno successivo e settimana 1 settimana 52
+            # stesso anno e settimana successiva o anno successivo e settimana 52 prima di settimana 1
             if (year == int(sprint[0:4]) and day+1 == int(sprint[4:].replace('-', '')) or
                 year+1 == int(sprint[0:4]) and day == 52 and int(sprint[4:].replace('-', '')) == 1 ):
-                print("Successivo")
-                """print(year, "==", sprint[0:4], "?")
-                y = int(day) + 1
-                print(y, "==", sprint[4:].replace('-', ''), "?")"""
+                # print("Successivo")
+                a = 1
             else:
-                print("NON Successivo")
-                """print(year, "==", sprint[0:4], "?")
-                y = int(day) + 1
-                print(y, "==", sprint[4:].replace('-', ''), "?")"""
+                # print("NON Successivo")
                 not_consecutive_sprint.append(entry)
                 break
             day = int(sprint[4:].replace('-', ''))
             year = int(sprint[0:4])
-list_difference = [x for x in valid_sprint if x not in not_consecutive_sprint]
-print(list_difference)
+legit_sprint = [x for x in valid_sprint if x not in not_consecutive_sprint]
+# legit_sprint = scrum con sprint consecutivi
 
 
-
-"""if year == sprint[0:4] and day+1 == int(sprint[4:].replace('-', '')):
-    print("Consecutivi")
-    print(year, day)
-    print(sprint[0:4], sprint[4:].replace('-', ''))"""
-
-"""def intersection(lst1, lst2):
-    #lst3 = [list(filter(lambda x: x in lst1, sublist)) for sublist in lst2]
+# Creazione dei singoli layer di Scrum validati e leciti
+def intersection(lst1, lst2):
     return list(set(lst1) & set(lst2))
 
-coppie = []
-for entry_1 in lecit_sprint:
-    for entry_2 in [y for y in lecit_sprint if y is not entry_1]:
-        if len(intersection(entry_1, entry_2)) == 0:
-            coppie.append([entry_1, entry_2])
-print(coppie)"""
+
+def sprint_sequence(list, ind):
+    list_return = []
+    # Parto dallo sprint di indice indicato: ind
+    sprint_overlap = list[ind-1]
+    list_return.append(sprint_overlap)
+    for sprint in list:
+        if len(intersection(sprint_overlap, sprint)) == 0:
+            list_return.append(sprint)
+            sprint_overlap = sprint
+    return list_return
+
+good_sprint_sequence = sprint_sequence(legit_sprint, 1)
+print(good_sprint_sequence)
+
+sprint_develop = np.zeros(len(year_week_x), dtype=int)  # y value of sprint develop
+sprint_test = np.zeros(len(year_week_x), dtype=int)     # y value of sprint test
+sprint_else = data['Sprint_week'].copy()                # y value of not scrum sprint
+
+for id, year_week in enumerate(year_week_x):
+    for sprint in good_sprint_sequence:
+        if [True for s in sprint[0:SLIDING_WINDOW-1] if s == year_week]:
+            #print("Developing")
+            #print(year_week)
+            sprint_develop[id] = data['Sprint_week'][id]
+            sprint_else[id] = 0
+            break
+        if year_week == sprint[SLIDING_WINDOW-1]:
+            #print("Testing", year_week, sprint[SLIDING_WINDOW-1])
+            #print(year_week)
+            sprint_test[id] = data['Sprint_week'][id]
+            sprint_else[id] = 0
+            break
+"""print(year_week_x)
+print(len(sprint_develop))
+print(sprint_develop)
+print(len(sprint_test))
+print(sprint_test)
+print(len(sprint_else))
+print(sprint_else)"""
+
+plt.figure(1)
+barlist_else = plt.bar(year_week_x, sprint_else)
+barlist_development = plt.bar(year_week_x, sprint_develop, label='Sprint Development')
+barlist_test_fix = plt.bar(year_week_x, sprint_test, color='g', label='Sprint Test')
+plt.legend(loc='upper right')
+plt.xticks(year_week_x, year_week_x, rotation=30)  # x
+plt.xlabel('Weekly commits')  # x
+plt.ylabel('Number of changes')  # y
+plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
+plt.title('Scrum Sprint Threshold', fontsize=15)
+plt.show()
+
+
 
 # Calcolo la dimensione massima di sprint possibili in un repo.
 """print(len(year_week_x))

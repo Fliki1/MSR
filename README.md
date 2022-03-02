@@ -56,6 +56,27 @@ con relative conclusioni. [Sprint_plot.py](Sprint_plot.py) ne grafica i risultat
 
 _I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
+**_Automatismo sugli esiti e Formula_**:
+Per ricercare e stabilire la buona riuscita dei risultati ottenuti,
+si è definito un automatismo sugli esiti che ne validi i risultati.
+E' stata creata una finestra tempolare (SLIDING WINDOW), la cui dimensione
+viene stabilita a priori arbitrariamente, 
+che va alla ricerca dei possibili Scrum presenti nello storico del progetto. 
+L'obiettivo è quello di determinare e stabilire delle thresholds da applicare
+per individuare lo Scrum che varia da progetto a progetto.
+
+Una volta stabilita la dimensione della finestra **n** viene cosi 
+interpretata: le prime n-1° settimane sono da intendere come Sprint di sviluppo, la 
+rimanente Sprint come settimana di testing.
+
+Definita la finestra si applicano dei filtri ai dati raccolti al fine 
+di soddisfare i seguenti asset:
++ gli Sprint contenuti nella finestra temporale devono essere settimane _consecutive_
++ gli Scrum devono soddisfare la regola/soglia tale per cui, la media dei commit 
+delle prime n-1 settimane deve essere maggiore della successiva n-iesima:
+`media(n-1)°>n°`
++ non fare _accavallare_ gli sprint tra loro
+
 [comment]: <> (_Nota: la metrica Sprint non conteggia e non riporta le settimane senza commit._)
 
 ### 7. Bag-of-Words Sprint week commit message:
