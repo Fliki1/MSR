@@ -117,15 +117,15 @@ print(len(sprint_else))
 print(sprint_else)"""
 
 plt.figure(1)
-barlist_else = plt.bar(year_week_x, sprint_else)
-barlist_development = plt.bar(year_week_x, sprint_develop, label='Sprint Development')
-barlist_test_fix = plt.bar(year_week_x, sprint_test, color='g', label='Sprint Test')
+barlist_else = plt.bar(year_week_x, sprint_else, color='silver')
+barlist_development = plt.bar(year_week_x, sprint_develop, color='cornflowerblue', label='Sprint Development')
+barlist_test_fix = plt.bar(year_week_x, sprint_test, color='#ed872d', label='Sprint Test')
 plt.legend(loc='upper right')
-plt.xticks(year_week_x, year_week_x, rotation=30)  # x
+plt.xticks(year_week_x, year_week_x, rotation=90)  # x
 plt.xlabel('Weekly commits')  # x
 plt.ylabel('Number of changes')  # y
-plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
-plt.title('Scrum Sprint Threshold', fontsize=15)
+plt.suptitle('Scrum Sprint Threshold', fontsize=18)
+plt.figtext(0.415, 0.9, path_split[len(path_split) - 1], fontsize=14)
 plt.show()
 
 
