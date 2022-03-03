@@ -8,7 +8,7 @@ Il progetto consiste nella creazione di una serie di metriche
 specifie e peculiari per analizzare, un repository o una lista
 di questi (.git url e local repository), seguendo i dettami 
 della M.S.R. al fine di ottenere possibili informazioni utili 
-per l'Ingegneria del Software
+per l'Ingegneria del Software.
 
 
 ### 1. Activity per day of the week:
@@ -65,17 +65,23 @@ che va alla ricerca dei possibili Scrum presenti nello storico del progetto.
 L'obiettivo è quello di determinare e stabilire delle thresholds da applicare
 per individuare lo Scrum che varia da progetto a progetto.
 
-Una volta stabilita la dimensione della finestra **n** viene cosi 
-interpretata: le prime n-1° settimane sono da intendere come Sprint di sviluppo, la 
-rimanente Sprint come settimana di testing.
+Una volta stabilita quale deve essere considerata come prima sprint lecita dalla quale
+poi determinare le successive: `SCRUM_SEQUENCE`
+e la dimensione della finestra **n**: `SLIDING_WINDOW`. La finestra viene cosi 
+interpretata: le prime _n-1°_ settimane sono da intendere come Sprint di sviluppo, la 
+rimanente Sprint _n°_ come settimana di testing.
 
 Definita la finestra si applicano dei filtri ai dati raccolti al fine 
 di soddisfare i seguenti asset:
-+ gli Sprint contenuti nella finestra temporale devono essere settimane _consecutive_
++ gli Sprint contenuti nella finestra temporale devono essere settimane temporalmente _consecutive_
 + gli Scrum devono soddisfare la regola/soglia tale per cui, la media dei commit 
-delle prime n-1 settimane deve essere maggiore della successiva n-iesima:
+delle prime _n-1°_ settimane deve essere maggiore della successiva _n-iesima_:
 `media(n-1)°>n°`
 + non fare _accavallare_ gli sprint tra loro
+
+Gli esiti della ricerca automatica degli Sprint sono riportati da [Sprint_plot_Auto.py](Sprint_plot_Auto.py)
+
+_I dati raccolti NON riportano la media, ma il count settimale dei commit._
 
 [comment]: <> (_Nota: la metrica Sprint non conteggia e non riporta le settimane senza commit._)
 
@@ -84,7 +90,7 @@ Metrica per individuare la possibile presenza di un
 approccio Agile: Scrum Sprint.
 La metrica si basa sulla ricerca della finestra temporale di ciascun Sprint
 studiando il contenuto dei messaggi dei commit settimanali. Con l'ausilio 
-della tecnica di BoW si determinano la presenza di parole chiavi quali: FIX-BUG-DOC-REF-TEST
+della tecnica di BoW si determinano la presenza di parole chiavi quali: FIX-BUG-DEBUG-DOC-REF-TEST
 per distinguere i commit effettuati durante la fase di Testing dalla fase di sviluppo del repository.
 [Sprint_BoW_plot.py](Sprint_BoW_plot.py) ne grafica i risultati.
 
@@ -149,15 +155,17 @@ Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 * Evita l'uso della directory `side-packages/` quando si necessità l'uso di questi solo per un progetto.
 
 ## Esiti 6. Sprint week
-Plot della metrica Sprint week effettuato con [Sprint_plot.py](Sprint_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [Final result](./final-results) o [Data results](./data-results).
+Plot della metrica Sprint week effettuato con [Sprint_plot.py](Sprint_plot.py) e [Sprint_plot_Auto.py](Sprint_plot_Auto.py) 
+specificando il path dove sono presenti i CSV file, dentro la cartella [Final result](./final-results) o [Data results](./data-results).
 Le due cartelle riportano gli esisti rispettivamente di tutto l'andamento del repository o dei singoli remote branch che lo caratterizzano.
 Lo script esegue una serie di report grafici tutti vincolati allo studio dello Scrum:
 * numero andamento commit negli sprint
 * andamento sprint nel corso degli anni per intero (conteggio settimane senza sprint)
 * numero autori degli sprint
 * combinazione di sprint su branch diversi: feature vs test
+* ricerca automatica degli Scrum Sprint evidenziandone le settimana di sviluppo da quelli di testing/debugging
 
-Start script
+Start script:
 ````commandline
 python Sprint_plot.py
 Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
@@ -183,6 +191,15 @@ Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
 ##### Main branch + sotto branch (es: testing)
 ![Screenshot](fig/main_branch_join_branch.png)
 
+Start script:
+````commandline
+python Sprint_plot_Auto.py
+Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
+````
+##### Scrum Sprint Threshold
+![Screenshot](fig/sprint%20auto.png)
+
+
 ## Esiti 7. Bow Sprint week
 Plot della metrica BoW Sprint week effettuato con [Sprint_BoW_plot.py](Sprint_BoW_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [data results](./data-results).
 Per il plot del BoW Sprint week è richiesta anche l'esecuzione della 6. Sprint week.
@@ -195,8 +212,14 @@ FIX-BUG-DEBUG-TEST-REF-DOC.
 In base all'occorrenza di questi nei messaggi dei commit dell'arco della settimana associano un tag alla Sprint
 di appartenenza.
 
-#### Esempio 1: master branch
-![Screenshot](fig/sprint_branch_es_1.png)
+Start script:
+````commandline
+python Sprint_BoW_plot.py
+Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
+````
+#### BoW plot
+Ne vengono riportati anche le parole e coppia di parole più usate nei commenti.
+![Screenshot](fig/bow.png)
 
 #### TODO:
 
