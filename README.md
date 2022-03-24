@@ -59,7 +59,7 @@ _I dati raccolti NON riportano la media, ma il count settimale dei commit._
 **_Automatismo sugli esiti e Formula_**:
 Per ricercare e stabilire la buona riuscita dei risultati ottenuti,
 si è definito un automatismo sugli esiti che ne validi i risultati.
-E' stata creata una finestra tempolare (SLIDING WINDOW), la cui dimensione
+E' stata creata una finestra temporale (SLIDING WINDOW), la cui dimensione
 viene stabilita a priori arbitrariamente, 
 che va alla ricerca dei possibili Scrum presenti nello storico del progetto. 
 L'obiettivo è quello di determinare e stabilire delle thresholds da applicare

@@ -36,6 +36,7 @@ if len(year_week_x) >= SLIDING_WINDOW and len(
             # print("+1 ", data['Sprint_week'][i+SLIDING_WINDOW-1])
 else:
     print("Impossibile ottenere gli sprint: SLIDING_WINDOW > dei dati da analizzare")
+    exit(0)
 
 
 # Check valid sprint to legit sprint: sprint consecutivi settimanali
@@ -74,6 +75,9 @@ def intersection(lst1, lst2):
 
 def sprint_sequence(lista, ind):
     """ Return list not-overlap sprint sequence """
+    # check se il repositori ha abbastanza elementi per processare almeno 1 scrum
+    if ind - 1 < 0:
+        return []
     list_return = []
     # Parto dallo sprint di indice indicato: ind
     sprint_overlap = lista[ind - 1]
@@ -84,9 +88,15 @@ def sprint_sequence(lista, ind):
             sprint_overlap = sprint
     return list_return
 
+
+# check se i dati leciti sono abbastanza rispetto alla dimensione della SLIDING_WINDOW
+if len(legit_sprint) < SLIDING_WINDOW:
+    exit("Impossibile ottenere gli sprint: SLIDING_WINDOW > dati leciti")
 # good_sprint_sequence: sequenza di sprint che non si accavallano a partire da SCRUM_SEQUENCE sprint iesimo
 good_sprint_sequence = sprint_sequence(legit_sprint, SCRUM_SEQUENCE)
-# print(good_sprint_sequence)
+# check
+if len(good_sprint_sequence) < 0:
+    exit("No abbastanza dati nemmeno per una finestra di Sprint (len(good_sprint_sequence) < 0)")
 
 sprint_develop = np.zeros(len(year_week_x), dtype=int)  # y value of sprint develop
 sprint_test = np.zeros(len(year_week_x), dtype=int)  # y value of sprint test
