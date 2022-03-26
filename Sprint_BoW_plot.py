@@ -251,7 +251,7 @@ plt.figure(1)
 barlist_development = plt.bar(main_datax, development_y, label='Development')
 barlist_test_fix = plt.bar(main_datax, test_fix_y, color='g', label='FIX-TEST-BUG-DEBUG-REF-DOC')
 plt.legend(loc='upper right')
-plt.xticks(main_datax, main_datax, rotation=30)  # x
+plt.xticks(main_datax, main_datax, rotation=90)  # x
 plt.xlabel('Weekly commits')  # x
 plt.ylabel('Number of changes')  # y
 plt.suptitle(path_split[len(path_split) - 1], fontsize=10)
