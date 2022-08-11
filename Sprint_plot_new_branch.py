@@ -41,16 +41,16 @@ year_week_total = list(dict.fromkeys(tmp_year_week_main))  # duplicati
 # Matrice di riferimento per tenere il conto dei sprint commit per branch
 matrix_sprint = np.zeros((len(folder), len(year_week_total)), dtype=int)
 
-# Riempio Matrice di sprint con il main.csv: matrix_sprint riga 1 nelle stesse e sole coordinate in cui è presente il
-# dato nella stessa data
+# Riempio Matrice di sprint con il main.csv:
+# La prima riga corrisponde alle Spint_week del main
+# nelle stesse e sole coordinate in cui è presente il dato nella stessa data
+# nelle date in cui non è presente sprint nel main ma nel branch si, rimane 0
 year_week_main = [x[:4] + "-" + str(y) for x, y in zip(main_data['Day'], main_data['Week'])]
 for index, day in enumerate(year_week_main):
     matrix_sprint[0][year_week_total.index(day)] = main_data["Sprint_week"][index]
-# print(matrix_sprint)
 
 # Rimozione main branch dal folder
 folder.remove(main_branch_name)
-# print(folder)
 
 # =====================================
 
@@ -58,27 +58,28 @@ folder.remove(main_branch_name)
 # SI LAVORA PER LISTE DI COMMIT PER SINGOLA SETTIMANA!!!
 commits_main = main_data["Commits"]
 
+
 for index, branch in enumerate(folder):
-    branch_data = pd.read_csv("final-results/" + repo_name + "/" + branch)  # prendo i dati del branch text
+    branch_data = pd.read_csv("final-results/" + repo_name + "/" + branch)  # prendo i dati del branch iesimo
     year_week_branch = [x[:4] + "-" + str(y) for x, y in
                         zip(branch_data['Day'], branch_data['Week'])]  # year_week branch
     commits_branch = branch_data["Commits"]  # prendo i commit del branch-i
-    # print(branch)
+
     for index_day, year_week in enumerate(year_week_branch):
         indice_matrix = year_week_total.index(year_week)  # indice della matrice su cui salvare il dato
         # print("indice_matrix ", indice_matrix)
         if year_week in year_week_main:  # se la data è presente nel main branch
             # commit_hash check tra il main e il branch
-
-            # prendo lista commit del main
-            commits_main_year_week = commits_main[year_week_main.index(year_week)].split(
-                "'")  # forse ha senso direttamente index_day
+            #print("del giorno ",year_week)
+            # prendo lista commit del main - del corrispettivo year_week
+            commits_main_year_week = commits_main[year_week_main.index(year_week)].split("'")
+            # operazioni di filtro
             commits_main_year_week = list(set(commits_main_year_week))
             if ', ' in commits_main_year_week:
                 commits_main_year_week.remove(', ')
             commits_main_year_week.remove('[')
             commits_main_year_week.remove(']')
-            # print("MAIN: ", commits_main_year_week)
+            #print("MAIN: ", commits_main_year_week)
 
             # prendo lista commit del branch
             commits_branch_year_week = commits_branch[index_day].split("'")
@@ -88,18 +89,19 @@ for index, branch in enumerate(folder):
             commits_branch_year_week.remove('[')
             commits_branch_year_week.remove(']')
 
-            for hash_commit in commits_branch_year_week:  # Stessa settimana
-                if hash_commit not in commits_main_year_week:  # commit_Hash diversi
+            for hash_commit in commits_branch_year_week:  # Hash commit della settimana year_week-iesima
+                if hash_commit not in commits_main_year_week:  # commit_Hash diversi - salvo solo quelli non nel MAIN
                     matrix_sprint[index + 1][indice_matrix] += 1
-        else:  # data non presente nel MAIN branch
+        else:  # data non presente nel MAIN branch - salvo sprint_week dal branch_data
             matrix_sprint[index + 1][indice_matrix] = branch_data['Sprint_week'][index_day]
 
-
-# Define max value limit y-axes
+# Define max value limit y-axes - looking for max sprint_week in matrix_sprint
 prec_line = np.zeros(len(year_week_total), dtype=int)
 for sprint_branch in matrix_sprint:
     prec_line = np.add(prec_line, sprint_branch)
 max = max(prec_line)
+
+# TODO: fare lo stesso per determinare il massimo/minimo/media
 
 # Plot
 sns.set(style="darkgrid")  # corrisponde al plt.grid(True)
@@ -108,14 +110,20 @@ plt.figure(1)
 # year_week_total: x asses
 # matrix_sprint[0]: main branch
 # matrix_sprint[i]: branch folder[i-1]
+"""
+# Sprint Weekly Stacked Bar Graph - plot main distinto per branches
 
-# Main branch plt
+# Main branch plt - tale da rendere il main visibile dal fondo/base del plot
 plt.bar(year_week_total, matrix_sprint[0], label=main_branch_name)
-# Other branch plt
+# Plot main - starting from main sprint_week
 prec_bottom = np.zeros(len(year_week_total), dtype=int)
+prec_bottom = np.add(prec_bottom, matrix_sprint[0])
+# Other branch plt
 for riga, sprint_branch in enumerate(matrix_sprint[1:]):
-    prec_bottom = np.add(prec_bottom, matrix_sprint[riga])
     plt.bar(year_week_total, sprint_branch, bottom=prec_bottom, label=folder[riga])
+    prec_bottom = np.add(prec_bottom, matrix_sprint[riga + 1])  # base dalla quale plot i successivi branch
+    #print(sprint_branch, folder[riga])
+
 # Y-axes limit top
 plt.ylim(0, max + 1)
 plt.xticks(year_week_total, year_week_total, rotation=90)  # x
@@ -126,19 +134,22 @@ plt.title('Sprint Weekly Stacked Bar Graph', fontsize=15)
 plt.legend()
 plt.show()
 
-# crosstab percentange bar plot
+# =========================================================================
+
+
+# Plot crosstab percentange bar plot Verticale
 pal = ["royalblue", "dodgerblue", "lightskyblue", "lightblue"]
 # indice riga
 riga_indice = [main_branch_name] + folder
 df = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice, name='branch'),
                   columns=pd.Index(year_week_total, name='year_week'))
-
 ax = df.apply(lambda r: r / r.sum() * 100, axis=1)
 
-ax_1 = ax.plot.bar(mark_right = True, stacked=True, rot=0, color=pal)
+
+ax_1 = ax.plot.bar(mark_right=True, stacked=True, rot=0, color=pal)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
-plt.xlabel('Name')
+plt.xlabel('Branches')
 plt.ylabel('Percent Distribution')
 
 for rec in ax_1.patches:
@@ -149,6 +160,8 @@ for rec in ax_1.patches:
               ha='center',
               va='bottom')
 plt.show()
+
+# ========================================================================
 
 # Orizzontal stacked charts
 ax.plot(
@@ -167,23 +180,33 @@ for i, riga in enumerate(matrix_sprint):
 df_rel = df[df.columns[0:]].div(matrix_to_list, 0) * 100
 # print(df_rel)
 
-# text sui bar che non funziona
-"""for n in df_rel:
-    for i, (cs, ab, pc) in enumerate(zip(df.iloc[:, 1:].cumsum(1)[n],
-                                         df[n], df_rel[n])):
-        plt.text(cs - ab / 2, i, str(np.round(pc, 1)) + '%',
-                 va='center', ha='center')"""
-
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.show()
-
 """
-# create color palette:
-library(RColorBrewer)
-coul <- brewer.pal(3, "Pastel2") 
+# =============================================
 
-pal color 
+# MODIFICATO DA ME
+riga_indice = [main_branch_name] + folder
+riga_indice_due = [x.replace('sprint_week_', '') for x in riga_indice]
 
-pal = ["royalblue", "dodgerblue", "lightskyblue", "lightblue"]
+df_due = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_due), columns=pd.Index(year_week_total))
 
-"""
+ax_due = df_due.apply(lambda r: r / r.sum() * 100, axis=1)
+#print(ax_due)
+
+ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
+
+plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+plt.xlabel('Branches')
+plt.ylabel('Percent Distribution')
+
+for rec in ax_2.patches:
+    height = rec.get_height()
+    width = rec.get_width()
+    ax_2.text(rec.get_x() + width / 2,
+              rec.get_y() + height / 4,
+              "{:.0f}%".format(width),
+              ha='center',
+              va='bottom')
+plt.show()
+
