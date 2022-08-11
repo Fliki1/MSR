@@ -203,9 +203,13 @@ plt.ylabel('Percent Distribution')
 for rec in ax_2.patches:
     height = rec.get_height()
     width = rec.get_width()
+    if width == 0:
+        percentuale = ""
+    else:
+        percentuale = "{:.0f}%".format(width)
     ax_2.text(rec.get_x() + width / 2,
               rec.get_y() + height / 4,
-              "{:.0f}%".format(width),
+              percentuale,
               ha='center',
               va='bottom')
 plt.show()
