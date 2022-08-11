@@ -21,7 +21,7 @@ sns.set()  # corrisponde al plt.grid(True)
 year_week_x = [x[:4] + "-" + str(y) for x, y in zip(data['Day'], data['Week'])]  # dati nella forma anno-settimana
 
 # Ricerca di Sprint validi 3+1
-valid_sprint = [] # valid_sprint: Scrum i cuoi sprint soddisfano la soglia: media(1°,2°,3°)>4°
+valid_sprint = [] # valid_sprint: Scrum i cui sprint soddisfano la soglia: media(1°,2°,3°)>4°
 if len(year_week_x) >= SLIDING_WINDOW and len(
         year_week_x) - SLIDING_WINDOW + 1 > 0:  # controllo dimensione dati vs SLIDING_WINDOW
     """print(SLIDING_WINDOW)
