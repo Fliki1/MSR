@@ -136,7 +136,7 @@ plt.show()
 # =========================================================================
 
 
-# Plot crosstab percentange bar plot Verticale
+# Plot crosstab percentage bar plot Verticale
 pal = ["royalblue", "dodgerblue", "lightskyblue", "lightblue"]
 # indice riga
 riga_indice = [main_branch_name] + folder
@@ -150,6 +150,7 @@ ax_1 = ax.plot.bar(mark_right=True, stacked=True, rot=0, color=pal)
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.xlabel('Branches')
 plt.ylabel('Percent Distribution')
+plt.title('Percentage sprint week bar plot Verticale', fontsize=15)
 
 for rec in ax_1.patches:
     height = rec.get_height()
@@ -162,7 +163,7 @@ plt.show()
 
 # ========================================================================
 
-# Orizzontal stacked charts - new style
+# horizontal stacked charts - new style
 
 riga_indice_due = [x.replace('sprint_week_', '') for x in riga_indice]
 
@@ -176,6 +177,7 @@ ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.xlabel('Branches')
 plt.ylabel('Percent Distribution')
+plt.title('Refactor horizontal bar percentage', fontsize=15)
 
 for rec in ax_2.patches:
     height = rec.get_height()
@@ -193,13 +195,15 @@ plt.show()
 
 # ===================================
 
-# Orizzontal stacked charts - new filtrato per mese e remove low percentance
+# horizontal stacked charts - new filtrato per mese e remove low percentage
 
-# Define min value - looking for max sprint_week in matrix_sprint
-sup = np.zeros(len(year_week_total), dtype=int)
-for sprint_branch in matrix_sprint:
+# Define min value not 0 - looking for max sprint_week in matrix_sprint
+"""sup = np.zeros(len(year_week_total), dtype=int)
+for sprint_branch in matrix_sprint[0]:
     sup = np.add(sup, sprint_branch)
-min = min(sup)
+min = min(sup)"""
+
+min = np.min(matrix_sprint[0][np.nonzero(matrix_sprint[0])])
 
 # Rimuovo min*2 dai sprint di main in matrix_sprint che si trova in posizione 0
 extra = 0       # sum dei sprint eliminati
@@ -218,7 +222,7 @@ second_half = matrix_sprint[0][ind_shif+1:]
 new_main = [y for x in [first_half, second_half] for y in x]
 new_main.append(extra)
 matrix_sprint[0] = new_main
-print(matrix_sprint)
+#print(matrix_sprint)
 
 # restringo l'analisi dei branches 'nel primo mese di lavoro' (non consecutivo)
 # Non considero caso di sprint nello stesso mese (inutile con git)
@@ -226,18 +230,18 @@ print(matrix_sprint)
 
 # tutti i branch non main [1:]
 # resetto dalla 5° settimana di sprint
-######matrix_sprint[1:, 4:] = 0
+#######àmatrix_sprint[1:, 4:] = 0
 # print(matrix_sprint)
 
 # caso 2: Considero prime 4 settimane con effort
 for r, branch_sprint in enumerate(matrix_sprint[1:]):
     count = 0
     for c, sprint in enumerate(branch_sprint):
-        if count == 4:
+        if count >= 4:
             matrix_sprint[r+1][c] = 0
-            break
         if sprint != 0:
             count += 1
+    print(matrix_sprint[r+1])
 print(matrix_sprint)
 
 # Plotting
@@ -257,6 +261,7 @@ ax_3 = ax_tre.plot.barh(mark_right=True, stacked=True, rot=0)
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.xlabel('Branches')
 plt.ylabel('Percent Distribution')
+plt.title('New Metric horizontal percentage Case-2 remove value '+str(min*2), fontsize=15)
 
 for rec in ax_3.patches:
     height = rec.get_height()
