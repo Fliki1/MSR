@@ -100,7 +100,6 @@ for sprint_branch in matrix_sprint:
     prec_line = np.add(prec_line, sprint_branch)
 max = max(prec_line)
 
-# TODO: fare lo stesso per determinare il massimo/minimo/media
 
 # Plotting
 sns.set(style="darkgrid")  # corrisponde al plt.grid(True)
@@ -149,7 +148,7 @@ ax_1 = ax.plot.bar(mark_right=True, stacked=True, rot=0, color=pal)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.xlabel('Branches')
-plt.ylabel('Percent Distribution')
+plt.ylabel('Percent scale')
 plt.title('Percentage sprint week bar plot Verticale', fontsize=15)
 
 for rec in ax_1.patches:
@@ -175,8 +174,8 @@ ax_due = df_due.apply(lambda r: r / r.sum() * 100, axis=1)
 ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
-plt.xlabel('Branches')
-plt.ylabel('Percent Distribution')
+plt.ylabel('Branches')
+plt.xlabel('Percentage scale')
 plt.title('Refactor horizontal bar percentage', fontsize=15)
 
 for rec in ax_2.patches:
@@ -187,7 +186,7 @@ for rec in ax_2.patches:
     else:
         percentuale = "{:.0f}%".format(width)
     ax_2.text(rec.get_x() + width / 2,
-              rec.get_y() + height / 4,
+              rec.get_y() + height / 8,
               percentuale,
               ha='center',
               va='bottom')
@@ -197,32 +196,21 @@ plt.show()
 
 # horizontal stacked charts - new filtrato per mese e remove low percentage
 
-# Define min value not 0 - looking for max sprint_week in matrix_sprint
-"""sup = np.zeros(len(year_week_total), dtype=int)
-for sprint_branch in matrix_sprint[0]:
-    sup = np.add(sup, sprint_branch)
-min = min(sup)"""
+# Define 1% in main sprint week and delete them
+tmp_main_df = pd.DataFrame(matrix_sprint[0])
+tmp_main_perc = tmp_main_df.apply(lambda r: r / r.sum() * 100, axis=0)
 
-min = np.min(matrix_sprint[0][np.nonzero(matrix_sprint[0])])
-
-# Rimuovo min*2 dai sprint di main in matrix_sprint che si trova in posizione 0
 extra = 0       # sum dei sprint eliminati
-ind_shif = 0    # indice di riferimento per inserire extra nei sprint_week del main
-for i, sprint_main in enumerate(matrix_sprint[0]):
-    if sprint_main <= 2*min:        # filtro gli sprint minori di questa soglia
-        matrix_sprint[0][i] = 0
-        ind_shif = i
-        extra += sprint_main
+for index, sprint_perc in tmp_main_perc.iterrows():
+    if sprint_perc[0] < 1.5:
+        extra += matrix_sprint[0][index]    # sum value
+        matrix_sprint[0][index] = 0         # reset value
 
 
-# inserisco extra nella matrix_sprint del main
-first_half = matrix_sprint[0][:ind_shif]
-second_half = matrix_sprint[0][ind_shif+1:]
+# nuovo campo 'extra' da inserire nella matrix_sprint
+extra_list = [0] * len(riga_indice)
+extra_list[0] = extra
 
-new_main = [y for x in [first_half, second_half] for y in x]
-new_main.append(extra)
-matrix_sprint[0] = new_main
-#print(matrix_sprint)
 
 # restringo l'analisi dei branches 'nel primo mese di lavoro' (non consecutivo)
 # Non considero caso di sprint nello stesso mese (inutile con git)
@@ -230,10 +218,10 @@ matrix_sprint[0] = new_main
 
 # tutti i branch non main [1:]
 # resetto dalla 5° settimana di sprint
-#######àmatrix_sprint[1:, 4:] = 0
+#######matrix_sprint[1:, 4:] = 0
 # print(matrix_sprint)
 
-# caso 2: Considero prime 4 settimane con effort
+# caso 2: Considero prime 4 settimane con effort nei branches
 for r, branch_sprint in enumerate(matrix_sprint[1:]):
     count = 0
     for c, sprint in enumerate(branch_sprint):
@@ -241,27 +229,30 @@ for r, branch_sprint in enumerate(matrix_sprint[1:]):
             matrix_sprint[r+1][c] = 0
         if sprint != 0:
             count += 1
-    print(matrix_sprint[r+1])
-print(matrix_sprint)
 
-# Plotting
+# Plotting Branches + main
 # remove sprint_week_ prefix e .csv suffix and from branches names
 riga_indice_tre = [x.replace('sprint_week_', '').replace('.csv', '') for x in riga_indice]
-# remove last year_week to put 'extra' tag
-year_week_extra = year_week_total[:-1]
-year_week_extra.append('extra')
 
-df_tre = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_tre), columns=pd.Index(year_week_extra))
+df_tre = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_tre), columns=pd.Index(year_week_total))
+df_tre['extra'] = extra_list
 
+# filtro i dati NULL
+nan_value = float("NaN")
+df_tre.replace(0, nan_value, inplace=True)
+
+df_tre.dropna(how='all', axis=1, inplace=True)
+
+# Determino la percentuale
 ax_tre = df_tre.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
-# print(ax_due)
+# print(ax_tre.typo)
 
 ax_3 = ax_tre.plot.barh(mark_right=True, stacked=True, rot=0)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
-plt.xlabel('Branches')
-plt.ylabel('Percent Distribution')
-plt.title('New Metric horizontal percentage Case-2 remove value '+str(min*2), fontsize=15)
+plt.ylabel('Branches')
+plt.xlabel('Percentage scale')
+plt.title('New Metric horizontal percentage Case-2 remove 1% Main + Branches', fontsize=15)
 
 for rec in ax_3.patches:
     height = rec.get_height()
@@ -271,7 +262,81 @@ for rec in ax_3.patches:
     else:
         percentuale = "{:.0f}%".format(width)
     ax_3.text(rec.get_x() + width / 2,
-              rec.get_y() + height / 4,
+              rec.get_y() + height / 40,
+              percentuale,
+              ha='center',
+              va='bottom')
+plt.show()
+
+# Plotting branches only
+# remove sprint_week_ prefix e .csv suffix and from branches names
+riga_indice_branches = [x.replace('sprint_week_', '').replace('.csv', '') for x in folder]
+
+df_bra = pd.DataFrame(matrix_sprint[1:], index=pd.Index(riga_indice_branches), columns=pd.Index(year_week_total))
+
+
+# filtro i dati NULL
+nan_value = float("NaN")
+df_bra.replace(0, nan_value, inplace=True)
+
+df_bra.dropna(how='all', axis=1, inplace=True)
+
+# Determino la percentuale
+ax_bra = df_bra.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
+
+ax_b = ax_bra.plot.barh(mark_right=True, stacked=True, rot=0)
+
+plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+plt.ylabel('Branches')
+plt.xlabel('Percentage scale')
+plt.title('New Metric horizontal percentage Case-2 Branches Only', fontsize=15)
+
+for rec in ax_b.patches:
+    height = rec.get_height()
+    width = rec.get_width()
+    if width == 0:
+        percentuale = ""
+    else:
+        percentuale = "{:.0f}%".format(width)
+    ax_b.text(rec.get_x() + width / 2,
+              rec.get_y() + height / 90,
+              percentuale,
+              ha='center',
+              va='bottom')
+plt.show()
+
+# Plotting Main only
+# remove sprint_week_ prefix e .csv suffix and from main names
+riga_indice_main = main_branch_name.replace('sprint_week_', '').replace('.csv', '')
+
+df_main = pd.DataFrame([matrix_sprint[0]], index=pd.Index([riga_indice_main]), columns=pd.Index(year_week_total))
+df_main['extra'] = extra
+
+# filtro i dati NULL
+nan_value = float("NaN")
+df_main.replace(0, nan_value, inplace=True)
+
+df_main.dropna(how='all', axis=1, inplace=True)
+
+# Determino la percentuale
+ax_main = df_main.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
+
+ax_m = ax_main.plot.barh(mark_right=True, stacked=True, rot=0)
+
+plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+plt.ylabel('Branches')
+plt.xlabel('Percentage scale')
+plt.title('New Metric horizontal percentage Case-2 Main Only', fontsize=15)
+
+for rec in ax_m.patches:
+    height = rec.get_height()
+    width = rec.get_width()
+    if width == 0:
+        percentuale = ""
+    else:
+        percentuale = "{:.0f}%".format(width)
+    ax_m.text(rec.get_x() + width / 2,
+              rec.get_y() + height / 2.25,
               percentuale,
               ha='center',
               va='bottom')
