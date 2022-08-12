@@ -58,7 +58,6 @@ folder.remove(main_branch_name)
 # SI LAVORA PER LISTE DI COMMIT PER SINGOLA SETTIMANA!!!
 commits_main = main_data["Commits"]
 
-
 for index, branch in enumerate(folder):
     branch_data = pd.read_csv("final-results/" + repo_name + "/" + branch)  # prendo i dati del branch iesimo
     year_week_branch = [x[:4] + "-" + str(y) for x, y in
@@ -103,14 +102,14 @@ max = max(prec_line)
 
 # TODO: fare lo stesso per determinare il massimo/minimo/media
 
-# Plot
+# Plotting
 sns.set(style="darkgrid")  # corrisponde al plt.grid(True)
 plt.figure(1)
 
 # year_week_total: x asses
 # matrix_sprint[0]: main branch
 # matrix_sprint[i]: branch folder[i-1]
-"""
+
 # Sprint Weekly Stacked Bar Graph - plot main distinto per branches
 
 # Main branch plt - tale da rendere il main visibile dal fondo/base del plot
@@ -163,8 +162,8 @@ plt.show()
 
 # ========================================================================
 
-# Orizzontal stacked charts
-ax.plot(
+# Orizzontal stacked charts - old
+"""ax.plot(
     kind = 'barh',
     stacked = True,
     title = 'Percentage Stacked Bar Graph',
@@ -181,12 +180,12 @@ df_rel = df[df.columns[0:]].div(matrix_to_list, 0) * 100
 # print(df_rel)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
-plt.show()
-"""
+plt.show()"""
+
 # =============================================
 
-# MODIFICATO DA ME
-riga_indice = [main_branch_name] + folder
+# Orizzontal stacked charts - new style
+
 riga_indice_due = [x.replace('sprint_week_', '') for x in riga_indice]
 
 df_due = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_due), columns=pd.Index(year_week_total))
@@ -214,3 +213,64 @@ for rec in ax_2.patches:
               va='bottom')
 plt.show()
 
+# ===================================
+
+# Orizzontal stacked charts - new filtrato per mese e remove low percentance
+
+# Define min value - looking for max sprint_week in matrix_sprint
+sup = np.zeros(len(year_week_total), dtype=int)
+for sprint_branch in matrix_sprint:
+    sup = np.add(sup, sprint_branch)
+min = min(sup)
+
+print(matrix_sprint)
+
+extra = 0       # sum dei sprint eliminati
+ind_shif = 0    # indice di riferimento per inserire extra nei sprint_week del main
+for i, sprint_main in enumerate(matrix_sprint[0]):
+    if sprint_main <= 2*min:        # filtro gli sprint minori di questa soglia
+        matrix_sprint[0][i] = 0
+        ind_shif = i
+        extra += sprint_main
+print("====================")
+print(matrix_sprint)
+print(extra)
+
+# inserisco extra nella matrix_sprint del main
+test = matrix_sprint[0][:ind_shif]
+test2 = matrix_sprint[0][ind_shif+1:]#+[extra]
+test3 = test + test2
+print(test, test2)
+print(test3)
+
+
+"""
+# TODO: fare lo stesso per determinare il massimo/minimo/media
+
+riga_indice_tre = [x.replace('sprint_week_', '') for x in riga_indice]
+
+df_due = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_due), columns=pd.Index(year_week_total))
+
+ax_due = df_due.apply(lambda r: r / r.sum() * 100, axis=1)
+#print(ax_due)
+
+ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
+
+plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
+plt.xlabel('Branches')
+plt.ylabel('Percent Distribution')
+
+for rec in ax_2.patches:
+    height = rec.get_height()
+    width = rec.get_width()
+    if width == 0:
+        percentuale = ""
+    else:
+        percentuale = "{:.0f}%".format(width)
+    ax_2.text(rec.get_x() + width / 2,
+              rec.get_y() + height / 4,
+              percentuale,
+              ha='center',
+              va='bottom')
+plt.show()
+"""
