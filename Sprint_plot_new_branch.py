@@ -162,28 +162,6 @@ plt.show()
 
 # ========================================================================
 
-# Orizzontal stacked charts - old
-"""ax.plot(
-    kind = 'barh',
-    stacked = True,
-    title = 'Percentage Stacked Bar Graph',
-    mark_right = True)
-
-matrix_to_list = np.zeros(len(folder)+1, dtype=int)
-
-for i, riga in enumerate(matrix_sprint):
-    matrix_to_list[i] = sum(riga)
-# print(matrix_to_list)
-
-
-df_rel = df[df.columns[0:]].div(matrix_to_list, 0) * 100
-# print(df_rel)
-
-plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
-plt.show()"""
-
-# =============================================
-
 # Orizzontal stacked charts - new style
 
 riga_indice_due = [x.replace('sprint_week_', '') for x in riga_indice]
@@ -191,7 +169,7 @@ riga_indice_due = [x.replace('sprint_week_', '') for x in riga_indice]
 df_due = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_due), columns=pd.Index(year_week_total))
 
 ax_due = df_due.apply(lambda r: r / r.sum() * 100, axis=1)
-#print(ax_due)
+# print(ax_due)
 
 ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
 
@@ -223,8 +201,7 @@ for sprint_branch in matrix_sprint:
     sup = np.add(sup, sprint_branch)
 min = min(sup)
 
-print(matrix_sprint)
-
+# Rimuovo min*2 dai sprint di main in matrix_sprint che si trova in posizione 0
 extra = 0       # sum dei sprint eliminati
 ind_shif = 0    # indice di riferimento per inserire extra nei sprint_week del main
 for i, sprint_main in enumerate(matrix_sprint[0]):
@@ -232,45 +209,65 @@ for i, sprint_main in enumerate(matrix_sprint[0]):
         matrix_sprint[0][i] = 0
         ind_shif = i
         extra += sprint_main
-print("====================")
-print(matrix_sprint)
-print(extra)
+
 
 # inserisco extra nella matrix_sprint del main
-test = matrix_sprint[0][:ind_shif]
-test2 = matrix_sprint[0][ind_shif+1:]#+[extra]
-test3 = test + test2
-print(test, test2)
-print(test3)
+first_half = matrix_sprint[0][:ind_shif]
+second_half = matrix_sprint[0][ind_shif+1:]
 
+new_main = [y for x in [first_half, second_half] for y in x]
+new_main.append(extra)
+matrix_sprint[0] = new_main
+print(matrix_sprint)
 
-"""
-# TODO: fare lo stesso per determinare il massimo/minimo/media
+# restringo l'analisi dei branches 'nel primo mese di lavoro' (non consecutivo)
+# Non considero caso di sprint nello stesso mese (inutile con git)
+# caso 1: Considero prime 4 settimane temporalmente vere
 
-riga_indice_tre = [x.replace('sprint_week_', '') for x in riga_indice]
+# tutti i branch non main [1:]
+# resetto dalla 5° settimana di sprint
+######matrix_sprint[1:, 4:] = 0
+# print(matrix_sprint)
 
-df_due = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_due), columns=pd.Index(year_week_total))
+# caso 2: Considero prime 4 settimane con effort
+for r, branch_sprint in enumerate(matrix_sprint[1:]):
+    count = 0
+    for c, sprint in enumerate(branch_sprint):
+        if count == 4:
+            matrix_sprint[r+1][c] = 0
+            break
+        if sprint != 0:
+            count += 1
+print(matrix_sprint)
 
-ax_due = df_due.apply(lambda r: r / r.sum() * 100, axis=1)
-#print(ax_due)
+# Plotting
+# remove sprint_week_ prefix e .csv suffix and from branches names
+riga_indice_tre = [x.replace('sprint_week_', '').replace('.csv', '') for x in riga_indice]
+# remove last year_week to put 'extra' tag
+year_week_extra = year_week_total[:-1]
+year_week_extra.append('extra')
 
-ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
+df_tre = pd.DataFrame(matrix_sprint, index=pd.Index(riga_indice_tre), columns=pd.Index(year_week_extra))
+
+ax_tre = df_tre.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
+# print(ax_due)
+
+ax_3 = ax_tre.plot.barh(mark_right=True, stacked=True, rot=0)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.xlabel('Branches')
 plt.ylabel('Percent Distribution')
 
-for rec in ax_2.patches:
+for rec in ax_3.patches:
     height = rec.get_height()
     width = rec.get_width()
     if width == 0:
         percentuale = ""
     else:
         percentuale = "{:.0f}%".format(width)
-    ax_2.text(rec.get_x() + width / 2,
+    ax_3.text(rec.get_x() + width / 2,
               rec.get_y() + height / 4,
               percentuale,
               ha='center',
               va='bottom')
 plt.show()
-"""
