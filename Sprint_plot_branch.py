@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-# Esempio
+# Esempio -  cnf-testbed/sprint_week_master.csv
 # path = 'final-results/awesome-docker/sprint_week_master.csv'
 main_branch = input("Enter Repository branch folder: final-results/")
 
@@ -176,7 +176,7 @@ ax_2 = ax_due.plot.barh(mark_right=True, stacked=True, rot=0)
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.ylabel('Branches')
 plt.xlabel('Percentage scale')
-plt.title('Refactor horizontal bar percentage', fontsize=15)
+plt.title('Refactor horizontal bar percentage Full', fontsize=15)
 
 for rec in ax_2.patches:
     height = rec.get_height()
@@ -247,7 +247,18 @@ df_tre.dropna(how='all', axis=1, inplace=True)
 ax_tre = df_tre.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
 # print(ax_tre.typo)
 
-ax_3 = ax_tre.plot.barh(mark_right=True, stacked=True, rot=0)
+# Palette
+# pal = ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600']
+set = ['#f3cf55', '#efd1c6', '#b3906c', '#97d5e0', '#88b14b', '#dd8452', '#da8bc3', '#5587a2', '#55a868', '#8dceff',
+       '#fd5757', '#8172b3', '#8aa2c6']
+pal = []
+while(len(pal)<len(ax_tre.columns)):
+    pal += set
+pal = pal[:len(ax_tre.columns)]
+pal[-1] = 'silver'
+
+
+ax_3 = ax_tre.plot.barh(mark_right=True, stacked=True, rot=0, color=pal)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.ylabel('Branches')
@@ -284,7 +295,7 @@ df_bra.dropna(how='all', axis=1, inplace=True)
 # Determino la percentuale
 ax_bra = df_bra.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
 
-ax_b = ax_bra.plot.barh(mark_right=True, stacked=True, rot=0)
+ax_b = ax_bra.plot.barh(mark_right=True, stacked=True, rot=0, color=set)
 
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.ylabel('Branches')
@@ -320,6 +331,13 @@ df_main.dropna(how='all', axis=1, inplace=True)
 
 # Determino la percentuale
 ax_main = df_main.apply(lambda r: r / r.sum() * 100, axis=1)  # applico la funzione a ciascuna 0: colonna 1: riga
+
+# Palette
+pal = []
+while(len(pal)<len(ax_main.columns)):
+    pal += set
+pal = pal[:len(ax_main.columns)]
+pal[-1] = 'silver'
 
 ax_m = ax_main.plot.barh(mark_right=True, stacked=True, rot=0)
 
