@@ -200,9 +200,48 @@ Enter CSV Repositories: data-results/sprint_week_nomerepository.csv
 ![Screenshot](fig/sprint%20auto.png)
 
 
+## Esiti 6.2 Branches Sprint week
+Plot della metrica Branches sprint week effettuato con [Sprint_plot_branch.py](Sprint_plot_branch.py)
+specificando il path dove sono presenti i CSV file, dentro la cartella [final-results](final-results).
+Per il plot del Branches Sprint week è richiesta l'esecuzione della metrica 6. Sprint week.
+Non vengono applicate modifiche ai file CSV ne generati di nuovi. I risultati sono
+direttamente visibili a schermo. L'esecuzione dello sprint richiede il folder
+del repository di studio e il csv del main/master branch.
+
+Start script:
+````commandline
+python Sprint_plot_branches.py
+Enter Repository branch folder: final-results/roposityname/sprint_week_nomemasteromain.csv
+````
+
+#### Branch bar graph
+Il grafico raffigura l'ammontare di effort di tutti i branch nell'arco delle 
+sprint week
+![Screenshot](fig/Branch%20bar%20graph.png)
+
+#### Percentage branches bar
+Si rappresentano gli sprint_week effort dei branches in percentuale.
+Nel main/master gli sprint_week effort minori dell'1% vengono filtrati e sommati
+in un unico campo chiamato Other in grigio. I rimanenti branches vengono
+raffigurati solo le prime 4 settimane di sprint effettivo, indipendentemente
+dalle tempistiche.
+![Screenshot](fig/branches%20+%20main%20perc%20horiz.png)
+
+#### Percentage branches only
+Si rappresentano solo le percentuali di sprint week effort dei branches
+escluso il main/master. Vengono raffigurati solo le prime 4 settimane di sprint effettivo, indipendentemente
+dalle tempistiche.
+![Screenshot](fig/branches%20horizontal%20perc.png)
+
+#### Percentage main only
+Si rappresentano solo le percentuali di sprint week effort del main/master.
+Gli sprint_week effort minori dell'1% vengono filtrati e sommati
+in un unico campo chiamato Other in grigio.
+![Screenshot](fig/branches%20main%20perc.png)
+
 ## Esiti 7. Bow Sprint week
-Plot della metrica BoW Sprint week effettuato con [Sprint_BoW_plot.py](Sprint_BoW_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [data results](./data-results).
-Per il plot del BoW Sprint week è richiesta anche l'esecuzione della 6. Sprint week.
+Plot della metrica BoW Sprint week effettuato con [Sprint_BoW_plot.py](Sprint_BoW_plot.py) specificando il path dove sono presenti i CSV file, dentro la cartella [data-results](./data-results).
+Per il plot del BoW Sprint week è richiesta anche l'esecuzione della metrica 6. Sprint week.
 La cartella data-results conterrà in questo modo gli esisti di entrambe le metriche.
 
 Lo script esegue tutto il processo di BoW consistente nella rimozione 

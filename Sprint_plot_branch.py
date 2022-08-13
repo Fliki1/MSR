@@ -125,6 +125,7 @@ for riga, sprint_branch in enumerate(matrix_sprint[1:]):
 # Y-axes limit top
 plt.ylim(0, max + 1)
 plt.xticks(year_week_total, year_week_total, rotation=90)  # x
+plt.locator_params(axis='x', nbins=len(year_week_total))
 plt.xlabel('Weekly commits')  # x
 plt.ylabel('Number of changes')  # y
 plt.suptitle(repo_name, fontsize=10)
