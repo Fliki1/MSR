@@ -148,6 +148,17 @@ python main.py [-h] [-w] [-hrs] [-avg AVERAGE] [-yr True/altro] [-l] [-s] [-b] [
   -v, --verbose  restituisce output verboso
 ````
 
+Per salvare anche l'ammontare di effort dei singoli utenti. Quanto questi hanno contribuito singolarmente nel progetto. 
+Vengono salvati l'ammontare di commit effettuati per singolo contributor e email associata con le seguenti chiamate.
+Number of commits per (author + email) on all branches:
+````commandline
+git shortlog -s -n -e --all
+````
+Number of commits per author on all branches and exclude statistics from merge commits:
+````commandline
+git shortlog -s -n --all --no-merges
+````
+
 #### Ambiente di sviluppo
 Sto usando PyCharm per gestire un ambiente venv con Python 3.8.
 * Al fine di prevenire problemi di dependency, rendere il progetto riproducibile e auto-contenuto.
