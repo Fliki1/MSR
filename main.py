@@ -5,7 +5,7 @@ from giturlparse import parse
 
 # TODO: continuare a seguire la doc di PyDriller ufficiale
 
-from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit, LineCodeCommit, SprintWeeks, SprintWeeksBoW
+from src import WeekCommit, HourCommit, AverageCommit, LastYear_WeekCommit, LineCodeCommit, SprintWeeks, SprintWeeksBoW, LOC
 
 # create logger
 logger = logging.getLogger(__name__)  # nome del modulo corrente (main.py): global logger
@@ -71,6 +71,7 @@ def arg_parse():
     parser.add_argument("-l", "--line", help="metrica: line trend commit", action="store_true")
     parser.add_argument("-s", "--sprint", help="metrica: sprint weeks commit", action="store_true")
     parser.add_argument("-b", "--sprintbow", help="metrica: sprint weeks commit BoW", action="store_true")
+    parser.add_argument("-loc", "--lineofcode", help="metrica: andamento LOC nel tempo", action="store_true")
     parser.add_argument("-v", "--verbose", help="restituisce output verboso", action="store_true")
     args = parser.parse_args()
     avg_set = False
@@ -79,23 +80,24 @@ def arg_parse():
         avg_set = True
     if (args.year == 'True'):     # Solo per gestire last year week commit
         year_set = True
-    return args.verbose, args.week, args.hour, avg_set, args.average, args.year, year_set, args.line, args.sprint, args.sprintbow
+    return args.verbose, args.week, args.hour, avg_set, args.average, args.year, year_set, args.line, args.sprint, args.sprintbow, args.lineofcode
 
 
 if __name__ == "__main__":
     # Log: gestisce sia la console che il salvataggio dei log [-v] (diversi per modulo)
-    verb, week, hour, average, average_file_type, lastyear, current, line, sprint, sprintbow = arg_parse()  # args parse: verbose choise | week commit ?
+    verb, week, hour, average, average_file_type, lastyear, current, line, sprint, sprintbow, loc = arg_parse()  # args parse: verbose choise | week commit ?
     log(verb)  # log file
 
     logger.info('Inizio del M.S.R.')
     urls = get_git_urls()
 
-    if not week and not hour and not average and not lastyear and not line and not sprint and not sprintbow:  # nessuna opzione scelta: all
+    if not week and not hour and not average and not lastyear and not line and not sprint and not sprintbow and not loc:  # nessuna opzione scelta: all
         WeekCommit.week_commit(urls, verb)
         HourCommit.hour_commit(urls, verb)
         AverageCommit.average_commit(urls, None, verb)
         LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
         LineCodeCommit.linecode_commit(urls, verb)
+        LOC.loc_commit(urls, verb)
         SprintWeeks.sprint_commit(urls, verb)
         SprintWeeksBoW.sprint_commit_bow(urls, verb)
     else:
@@ -109,6 +111,8 @@ if __name__ == "__main__":
             LastYear_WeekCommit.last_year_week_commit(urls, current, verb)
         if line:
             LineCodeCommit.linecode_commit(urls, verb)
+        if loc:
+            LOC.loc_commit(urls, verb)
         if sprint:
             SprintWeeks.sprint_commit(urls, verb)
         if sprintbow:
