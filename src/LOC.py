@@ -42,10 +42,10 @@ def bar_view(repo, repo_name, total_commits, csv_headers):
                         f'Time: {commit.committer_date}')
 
             total_line += commit.insertions - commit.deletions
-
+            # print(commit.committer_date.strftime("%d/%m/%Y"))
             writer.writerow({csv_headers[0]: commit.hash,  # Hash
                              csv_headers[1]: total_line,  # loc
-                             csv_headers[2]: commit.committer_date})  # Time
+                             csv_headers[2]: commit.committer_date.strftime("%d/%m/%Y")})  # Time
             time.sleep(0.1)
     logger.info(f'LOC Commit: {repo_name} ✔')
 
