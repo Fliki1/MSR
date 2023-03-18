@@ -1,4 +1,6 @@
 # M.S.R.
+[![en](https://img.shields.io/badge/lang-en-green)](README.en.md)
+
 Creazione ex novo del progetto di M.S.R. dei repository in Git. 
 
 Riconversione ed ampliamento del progetto esistente da Java ☕ -> Python 3 🐍
